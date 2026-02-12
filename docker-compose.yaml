@@ -1,0 +1,36 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: incident-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: incident_tracker
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user_api
+      MYSQL_PASSWORD: password_api
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-service:
+    build: .
+    container_name: incident-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/incident_tracker?allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=user_api
+      - SPRING_DATASOURCE_PASSWORD=password_api
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10mb"
+        max-file: "3"

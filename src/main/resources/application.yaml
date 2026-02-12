@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: incident-tracker
+
+  datasource:
+    url: {SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    jpa:
+      hibernate:
+        ddl-auto: update
+    # display SQL queries in the console (useful for dev L2/L3)
+    update show-sql: true
+
+
+  #spring.datasource.url=$
+  #spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
+  #spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+  #spring.jpa.hibernate.ddl-auto=update
+  # Pour voir les requêtes SQL dans la console (utile en dev N2/N3)
+  #spring.jpa.show-sql=true
