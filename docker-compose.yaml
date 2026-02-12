@@ -1,7 +1,7 @@
 services:
   mysql-db:
     image: mysql:8.0
-    container_name: incident-db
+    container_name: incident-tracker-db
     restart: always
     environment:
       MYSQL_DATABASE: incident_tracker
@@ -18,7 +18,7 @@ services:
 
   api-service:
     build: .
-    container_name: incident-api
+    container_name: incident-tracker-api
     ports:
       - "8080:8080"
     depends_on:
