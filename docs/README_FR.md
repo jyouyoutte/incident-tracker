@@ -33,7 +33,7 @@ Positionnez-vous à la racine du projet.
 - Voir les conteneurs en cours :
   docker ps
 - Suivre les logs :
-  docker-compose logs -f <nom_du_container>
+  docker-compose logs -f <nom_du_service>
 - Accéder à l'API :
   http://localhost:8080/
 
