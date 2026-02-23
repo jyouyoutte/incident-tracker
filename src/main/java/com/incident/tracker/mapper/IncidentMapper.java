@@ -3,7 +3,9 @@ package com.incident.tracker.mapper;
 import com.incident.tracker.domain.IncidentRequestDto;
 import com.incident.tracker.domain.IncidentResponseDto;
 import com.incident.tracker.model.Incident;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IncidentMapper {
     public Incident toEntity(IncidentRequestDto dto){
         return Incident.builder()
@@ -12,7 +14,7 @@ public class IncidentMapper {
                 .build();
     }
 
-    public IncidentResponseDto toResponseDto(Incident incident) {
+    public IncidentResponseDto toResponse(Incident incident) {
         return new IncidentResponseDto(
                 incident.getId(),
                 incident.getTitle(),

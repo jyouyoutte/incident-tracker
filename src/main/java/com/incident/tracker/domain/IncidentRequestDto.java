@@ -7,7 +7,6 @@ public record IncidentRequestDto(
         String title,
         @NotBlank
         String description,
-        String priority,
-        String assignedDeveloper
+        String priority
 ) {
 }
