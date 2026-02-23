@@ -32,6 +32,9 @@ public class Incident {
     @Enumerated(EnumType.STRING)
     private IncidentStatus status = IncidentStatus.OPEN;
 
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
+
     private String assignedDeveloper; // Simplified to a name/ID for now
 
     // Metadata for support diagnostics
