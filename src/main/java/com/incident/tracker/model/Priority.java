@@ -3,7 +3,7 @@ package com.incident.tracker.model;
 /**
  * Possible lifecycle states for an incident
  */
-public enum Priority {
+public enum Priority implements LabelledEnum {
     P1("CRITICAL"),
     P2("HIGH"),
     P3("MODERATE"),
@@ -13,5 +13,11 @@ public enum Priority {
 
     Priority(String label) {
         this.label = label;
+    }
+
+
+    @Override
+    public String getLabel() {
+        return label;
     }
 }

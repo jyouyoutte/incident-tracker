@@ -1,12 +1,17 @@
 package com.incident.tracker.domain;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
-public record IncidentRequestDto(
+
+@Getter
+@Setter
+public class IncidentRequestDto{
         @NotBlank
-        String title,
+        private String title;
+        private String description;
+        private String priority;
         @NotBlank
-        String description,
-        String priority
-) {
+        private String status;
 }

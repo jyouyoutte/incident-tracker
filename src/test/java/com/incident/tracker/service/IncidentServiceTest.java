@@ -1,5 +1,6 @@
 package com.incident.tracker.service;
 
+import com.incident.tracker.domain.IncidentPatchRequestDto;
 import com.incident.tracker.domain.IncidentRequestDto;
 import com.incident.tracker.domain.IncidentResponseDto;
 import com.incident.tracker.exception.IncidentAlreadyClosedException;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -23,8 +25,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-
-import org.mockito.Mockito;
 
 @ExtendWith(MockitoExtension.class)
 class IncidentServiceTest {
@@ -46,7 +46,11 @@ class IncidentServiceTest {
         @DisplayName("Doit mapper, sauvegarder et retourner le DTO de réponse")
         void shouldCreateAndReturnDto() {
             // Given
-            var request = new IncidentRequestDto("Titre", "Desc", "HIGH");
+            var request = new IncidentRequestDto();
+            request.setTitle("Titre");
+            request.setDescription("Desc");
+            request.setPriority("HIGH");
+            request.setStatus("OPEN");
             var incident = new Incident();
             var savedIncident = new Incident();
             var response = new IncidentResponseDto(1L, "Titre", "Desc", "HIGH", "OPEN", LocalDateTime.now(), null);
@@ -65,7 +69,7 @@ class IncidentServiceTest {
     }
 
     @Nested
-    @DisplayName("Méthode getAllIncidents")
+    @DisplayName("Method getAllIncidents")
     class GetAllIncidents {
 
         @Test
@@ -86,7 +90,7 @@ class IncidentServiceTest {
         }
 
         @Test
-        @DisplayName("Doit retourner une liste vide si aucun incident en base")
+        @DisplayName("Should return an empty list if no incident in database")
         void shouldReturnEmptyList() {
             Mockito.when(incidentRepository.findAll()).thenReturn(Collections.emptyList());
 
@@ -151,6 +155,91 @@ class IncidentServiceTest {
                     .isExactlyInstanceOf(IncidentAlreadyClosedException.class)
                     .hasMessageContaining("Incident with id " + 1 + " is already closed");
 
+            Mockito.verify(incidentRepository, Mockito.never()).save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Method updateIncident")
+    class UpdateIncident {
+        @Test
+        @DisplayName("Update an incident successfully, must use mapper to update fields, save and return an updated incident" )
+        void shouldUpdateIncidentSuccessfully() {
+            // Given
+            Long id = 1L;
+            var request = new IncidentPatchRequestDto();
+            request.setTitle("New Title");
+            request.setDescription("New Desc");
+            request.setPriority("MODERATE");
+            request.setStatus("OPEN");
+            var incident = new Incident();
+            incident.setStatus(IncidentStatus.OPEN);
+
+            var updatedIncident = new Incident();
+            updatedIncident.setStatus(IncidentStatus.IN_PROGRESS);
+
+            var response = new IncidentResponseDto( id,"New Title", "New Desc", "MODERATE", "IN_PROGRESS", null, LocalDateTime.now());
+
+            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
+            Mockito.when(incidentRepository.save(incident)).thenReturn(updatedIncident);
+            Mockito.when(mapper.toResponse(updatedIncident)).thenReturn(response);
+
+            // When
+            var result = incidentService.updateIncident(id, request);
+
+            // Then
+            Assertions.assertThat(result).isEqualTo(response);
+            Mockito.verify(incidentRepository).save(incident);
+        }
+        @Test
+        @DisplayName("Update an incident that does not exist, must throw an IncidentNotFoundException")
+        void should_throw_an_incident_not_found_exception_when_update_a_non_existing_incident() {
+            // Given
+            Long id = 2L;
+            var request = new IncidentPatchRequestDto();
+            request.setTitle("New Title");
+            request.setDescription("New Desc");
+            request.setPriority("MODERATE");
+            request.setStatus("OPEN");
+            var incident = new Incident();
+            incident.setStatus(IncidentStatus.OPEN);
+
+            // When
+            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.empty());
+
+            Assertions.assertThatThrownBy(() -> incidentService.updateIncident(id, request))
+                    .isExactlyInstanceOf(IncidentNotFoundException.class)
+                    .hasMessageContaining("Incident not found with id: 2");
+
+            // Then
+            Mockito.verify(incidentRepository, Mockito.only()).findById(id);
+            Mockito.verify(incidentRepository, Mockito.never()).save(any());
+        }
+
+
+
+        @Test
+        @DisplayName("Update an incident that is already, must throw an IncidentAlreadyClosedException")
+        void should_throw_an_already_closed_exception_when_update_a_closed_incident() {
+            // Given
+            Long id = 1L;
+            var request = new IncidentPatchRequestDto();
+            request.setTitle("New Title");
+            request.setDescription("New Desc");
+            request.setPriority("MODERATE");
+            request.setStatus("CLOSED");
+            var incident = new Incident();
+            incident.setStatus(IncidentStatus.CLOSED);
+
+            // When
+            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
+
+            Assertions.assertThatThrownBy(() -> incidentService.updateIncident(id, request))
+                    .isExactlyInstanceOf(IncidentAlreadyClosedException.class)
+                    .hasMessageContaining("Incident with id " + id + " is already closed");
+
+            // Then
+            Mockito.verify(incidentRepository, Mockito.only()).findById(id);
             Mockito.verify(incidentRepository, Mockito.never()).save(any());
         }
     }

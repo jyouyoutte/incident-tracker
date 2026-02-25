@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-@DataJpaTest // Charge uniquement les composants JPA et configure une base H2
+@DataJpaTest // Only loads JPA components and configures an H2 database
 public class IncidentRepositoryTest {
 
     @Autowired

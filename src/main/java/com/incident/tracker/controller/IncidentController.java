@@ -1,5 +1,6 @@
 package com.incident.tracker.controller;
 
+import com.incident.tracker.domain.IncidentPatchRequestDto;
 import com.incident.tracker.domain.IncidentRequestDto;
 import com.incident.tracker.domain.IncidentResponseDto;
 import com.incident.tracker.service.IncidentService;
@@ -15,7 +16,6 @@ import java.util.List;
 public class IncidentController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final IncidentService service;
-
 
     public IncidentController(IncidentService service) {
         this.service = service;
@@ -35,4 +35,10 @@ public class IncidentController {
     public IncidentResponseDto close(@PathVariable Long id) {
         return service.closeIncident(id);
     }
+
+    @PatchMapping("/{id}")
+    public IncidentResponseDto update(@PathVariable Long id, @Valid @RequestBody IncidentPatchRequestDto request) {
+        return service.updateIncident(id, request);
+    }
+
 }

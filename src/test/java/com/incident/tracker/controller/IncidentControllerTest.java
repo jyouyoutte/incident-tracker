@@ -1,6 +1,7 @@
 package com.incident.tracker.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.incident.tracker.domain.IncidentPatchRequestDto;
 import com.incident.tracker.domain.IncidentRequestDto;
 import com.incident.tracker.domain.IncidentResponseDto;
 import com.incident.tracker.exception.IncidentAlreadyClosedException;
@@ -18,9 +19,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(IncidentController.class)
@@ -39,8 +40,11 @@ class IncidentControllerTest {
     @DisplayName("POST /api/incidents - Success")
     void shouldCreateIncident() throws Exception {
 
-        IncidentRequestDto request =
-                new IncidentRequestDto("Bug login", "Impossible login", "HIGH");
+        IncidentRequestDto request = new IncidentRequestDto();
+        request.setTitle("Bug login");
+        request.setDescription("Impossible login");
+        request.setPriority("HIGH");
+        request.setStatus("OPEN");
 
         IncidentResponseDto response =
                 new IncidentResponseDto(1L, "Bug login", "Impossible login","HIGH","OPEN", LocalDateTime.now(), LocalDateTime.now());
@@ -61,9 +65,11 @@ class IncidentControllerTest {
     @Test
     @DisplayName("POST /api/incidents - Error 400 in case of empty Title")
     void shouldReturn400WhenTitleIsEmpty() throws Exception {
-        // Given - Le titre est @NotBlank dans votre record
-        var invalidRequest = new IncidentRequestDto("", "Impossible login", "HIGH");
-
+        var invalidRequest = new IncidentRequestDto();
+        invalidRequest.setTitle("");
+        invalidRequest.setDescription("Impossible login");
+        invalidRequest.setPriority("HIGH");
+        invalidRequest.setStatus("OPEN");
 
         // When & Then
         mockMvc.perform(post("/api/incidents")
@@ -77,7 +83,7 @@ class IncidentControllerTest {
     void shouldGetAllIncidents() throws Exception {
         // Given
         var response1 = new IncidentResponseDto(1L, "No connection", "D", "H", "OPEN", null, null);
-        var response2 = new IncidentResponseDto(2L, "No incidents diplayed", "D", "H", "OPEN", null, null);
+        var response2 = new IncidentResponseDto(2L, "No incidents displayed", "D", "H", "OPEN", null, null);
 
         when(service.getAllIncidents()).thenReturn(List.of(response1, response2));
 
@@ -104,7 +110,6 @@ class IncidentControllerTest {
     @Test
     @DisplayName("POST /api/incidents - Error 400 in case of already not found incident")
     void shouldReturn400WhenIncidentNotFound() throws Exception {
-        var invalidRequest = new IncidentResponseDto(1L, "T", "D", "H", "CLOSED", null, null);
         when(service.closeIncident(1L)).thenThrow(new IncidentNotFoundException(1L));
 
         // When & Then
@@ -114,10 +119,32 @@ class IncidentControllerTest {
     @Test
     @DisplayName("POST /api/incidents - Error 409 in case of already closed incident")
     void shouldReturn409WhenIncidentAlreadyClosed() throws Exception {
-        var invalidRequest = new IncidentResponseDto(1L, "T", "D", "H", "CLOSED", null, null);
         when(service.closeIncident(1L)).thenThrow(new IncidentAlreadyClosedException(1L));
 
         // When & Then
         mockMvc.perform(post("/api/incidents/1/close")).andExpect(status().isConflict());
     }
+    @Test
+    @DisplayName("PATCH /api/incidents/{id} - Success in case of updated incident")
+    void shouldUpdateIncident() throws Exception {
+        // Given
+        Long id = 1L;
+        var response = new IncidentResponseDto(id, "Bug login", "Impossible login", "HIGH", "IN_PROGRESS", null, LocalDateTime.now());
+        IncidentRequestDto request = new IncidentRequestDto();
+        request.setTitle("Bug login");
+        request.setDescription("Impossible login");
+        request.setPriority("HIGH");
+        request.setStatus("IN_PROGRESS");
+
+        when(service.updateIncident(eq(id), any(IncidentPatchRequestDto.class))).thenReturn(response);
+
+        // When & Then
+        mockMvc.perform(patch("/api/incidents/1", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.title").value("Bug login"));
+    }
+
 }
