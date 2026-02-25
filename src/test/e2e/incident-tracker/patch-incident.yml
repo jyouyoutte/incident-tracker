@@ -1,0 +1,35 @@
+info:
+  name: patch-incident
+  type: http
+  seq: 3
+
+http:
+  method: PATCH
+  url: http://localhost:8080/api/incidents/4
+  body:
+    type: json
+    data: |-
+      {
+          "status": "IN_PROGRESS"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("La priorité a été mise à jour", function() {
+          const data = res.getBody();
+          expect(data.priority).to.equal("HIGH");
+        });
+
+        test("La date de mise à jour est présente", function() {
+          const data = res.getBody();
+          expect(data.updatedAt).to.not.be.null;
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
