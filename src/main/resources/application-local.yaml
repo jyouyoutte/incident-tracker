@@ -20,8 +20,8 @@ spring:
 
 logging:
   level:
-    root: INFO                        # Le reste reste propre
-    com.incident.tracker: DEBUG        # Votre code métier
-    org.springframework.web: DEBUG    # Détails des requêtes HTTP
-    org.hibernate.SQL: DEBUG          # Pour voir les requêtes SQL
+    root: INFO                        # Keep the rest clean
+    com.incident.tracker: DEBUG       # Your business code
+    org.springframework.web: DEBUG    # HTTP request details
+    org.hibernate.SQL: DEBUG          # To see SQL queries
 

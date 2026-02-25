@@ -19,15 +19,15 @@ spring:
 
 logging:
   level:
-    root: INFO                        # Le reste reste propre
-    com.incident.tracker: DEBUG        # Votre code métier
-    org.springframework.web: DEBUG    # Détails des requêtes HTTP
-    org.hibernate.SQL: DEBUG          # Pour voir les requêtes SQL
+    root: INFO                        # Keep the rest clean
+    com.incident.tracker: DEBUG       # Your business code
+    org.springframework.web: DEBUG    # HTTP request details
+    org.hibernate.SQL: DEBUG          # To see SQL queries
 
 
   #spring.datasource.url=$
   #spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
   #spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
   #spring.jpa.hibernate.ddl-auto=update
-  # Pour voir les requêtes SQL dans la console (utile en dev N2/N3)
+  # To see SQL queries in the console (useful for dev L2/L3)
   #spring.jpa.show-sql=true
