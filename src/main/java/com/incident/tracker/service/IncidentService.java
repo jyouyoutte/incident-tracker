@@ -8,9 +8,7 @@ import com.incident.tracker.exception.IncidentNotFoundException;
 import com.incident.tracker.mapper.IncidentMapper;
 import com.incident.tracker.model.Incident;
 import com.incident.tracker.model.IncidentStatus;
-import com.incident.tracker.model.Priority;
 import com.incident.tracker.repository.IncidentRepository;
-import com.incident.tracker.utils.EnumFinderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -48,6 +46,14 @@ public class IncidentService {
                 .toList();
         logger.info("Fetched {} incident(s)", results.size());
         return results;
+    }
+
+    @Transactional(readOnly = true)
+    public IncidentResponseDto getIncidentById(Long id) {
+        logger.info("Fetching incident with id={}", id);
+        Incident incident = incidentRepository.findById(id)
+                .orElseThrow(() -> new IncidentNotFoundException(id));
+        return mapper.toResponse(incident);
     }
 
     @Transactional

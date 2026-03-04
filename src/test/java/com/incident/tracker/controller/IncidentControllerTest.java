@@ -95,6 +95,29 @@ class IncidentControllerTest {
     }
 
     @Test
+    @DisplayName("GET /api/incidents/{id} - Success")
+    void shouldGetIncidentById() throws Exception {
+        Long id = 1L;
+        var response = new IncidentResponseDto(id, "Bug login", "Impossible login", "HIGH", "OPEN", null, LocalDateTime.now());
+
+        when(service.getIncidentById(id)).thenReturn(response);
+
+        mockMvc.perform(get("/api/incidents/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.title").value("Bug login"));
+    }
+
+    @Test
+    @DisplayName("GET /api/incidents/{id} - Not Found")
+    void shouldReturn404WhenNotFound() throws Exception {
+        Long id = 2L;
+        when(service.getIncidentById(id)).thenThrow(new IncidentNotFoundException(id));
+
+        mockMvc.perform(get("/api/incidents/2")).andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("POST /api/incidents/{id}/close - Success in case of closed incident")
     void shouldCloseIncident() throws Exception {
         // Given

@@ -101,6 +101,40 @@ class IncidentServiceTest {
     }
 
     @Nested
+    @DisplayName("Method getIncidentById")
+    class GetIncidentById {
+
+        @Test
+        @DisplayName("Should return a response DTO when incident exists")
+        void shouldReturnDtoWhenFound() {
+            // Given
+            Long id = 1L;
+            var incident = new Incident();
+            var response = new IncidentResponseDto(id, "T", "D", "H", "OPEN", null, null);
+
+            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
+            Mockito.when(mapper.toResponse(incident)).thenReturn(response);
+
+            // When
+            var result = incidentService.getIncidentById(id);
+
+            // Then
+            Assertions.assertThat(result).isEqualTo(response);
+        }
+
+        @Test
+        @DisplayName("Should throw IncidentNotFoundException when not present")
+        void shouldThrowWhenNotFound() {
+            Long id = 2L;
+            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.empty());
+
+            Assertions.assertThatThrownBy(() -> incidentService.getIncidentById(id))
+                    .isExactlyInstanceOf(IncidentNotFoundException.class)
+                    .hasMessageContaining("Incident not found with id: " + id);
+        }
+    }
+
+    @Nested
     @DisplayName("Méthode closeIncident")
     class CloseIncident {
 
@@ -244,3 +278,4 @@ class IncidentServiceTest {
         }
     }
 }
+
