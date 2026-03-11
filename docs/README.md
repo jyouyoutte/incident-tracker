@@ -1,24 +1,37 @@
 # Incident Tracker — Quick Guide
 
-Purpose
-- Store basic incident data and optional reporter info that can be enriched from an external User Service.
+## Purpose
+Lightweight API to manage application incidents: creation, status tracking, assignment, comments, and search.
 
-Important fields
-- reporterName — reporter display name
-- reporterEmail — reporter email
+---
 
-How to use
-- You can set reporterName/reporterEmail directly when creating an Incident.
-- Optionally, enrich these fields from a User Service before saving.
+## Features
+- Create an incident
+- Change status: OPEN / IN_PROGRESS / RESOLVED / CLOSED
 
-Notes
-- assignedDeveloper currently stores a simple name or ID.
-- Enrichment is not implemented here; this file documents intent only.
+---
 
-Next steps
-- Implement a UserService client (HTTP/gRPC) in the service layer to fetch user details.
-- Populate reporterName and reporterEmail from that client before persisting incidents.
-- Add integration tests to cover enrichment flows.
+## Technical Stack
 
-Build
-- Recompile the project after updating code or adding the enrichment service.
+| Component | Version / Info                                      |
+|-----------|----------------------------------------------------|
+| Java | 21                                                 |
+| Spring Boot | 3.5.10                                           |
+| MySQL | 8.0.45                                            |
+| Spring Security | Simple JWT (not yet available – future addition) |
+| Docker & Docker Compose | 29.2.1                                  |
+| Tests | Unit & integration                                |
+| CI/CD | GitHub Actions (not yet available – future addition) |
+
+---
+
+## Architecture / DDD
+- **Model**: data classes (Incident, Comment, Status)
+- **Domain**: DTO objects (IncidentDto)
+- **Repository**: persistence interface to MySQL
+- **Service / Adapter**: business logic, incident management, potential enrichment from an external User Service
+- **Mapper**: conversion between Model and Domain
+- **Controller**: exposed REST API
+- **Security**: JWT, Spring Security
+
+> Simplified diagram:  

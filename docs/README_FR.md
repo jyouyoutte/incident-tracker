@@ -3,25 +3,46 @@
 ## But
 API légère pour gérer des incidents applicatifs : création, suivi de statut, affectation, commentaires et recherche.
 
+---
+
 ## Fonctionnalités
 - Créer un incident
-- Changer le statut : OPEN / IN_PROGRESS / RESOLVED
-- Assigner à un développeur
-- Ajouter des commentaires
-- Filtrer par statut
-- Pagination des listes
+- Changer le statut : OPEN / IN_PROGRESS / RESOLVED / CLOSED
 
-## Technique
-- Spring Boot 3
-- MySQL
-- Spring Security (JWT simple)
-- Logs structurés
-- Docker & Docker Compose
-- Gestion d’erreurs centralisée
-- Tests unitaires
-- CI : GitHub Actions
+---
 
-## Commandes utiles
+---
+## Stack Technique
+
+| Composant | Version / Infos                                     |
+|-----------|-----------------------------------------------------|
+| Java | 21                                                  |
+| Spring Boot | 3.5.10                                              |
+| MySQL | 8.0.45                                              |
+| Spring Security | JWT simple (non disponible - ajout ulterieur)       |
+| Docker & Docker Compose | 29.2.1                                              |
+| Tests | Unitaires & intégration                             |
+| CI/CD | GitHub Actions   (non disponible - ajout ulterieur) |
+
+---
+
+---
+## Architecture / DDD
+- **Model** : classes de données (Incident, Comment, Status)
+- **Domain** : objets dto (IncidentDto)
+- **Repository** : interface de persistance vers MySQL
+- **Service / Adapter** : logique métier, gestion des incidents, enrichissement potentiel depuis un User Service externe
+- **Mapper** : conversion entre Model et Domain
+- **Controller** : API REST exposée
+- **Security** : JWT, Spring Security
+
+
+> Diagramme simplifié :
+Controller --> Service --> Repository --> MySQL
+
+---
+
+## Commandes Docker utiles
 Positionnez-vous à la racine du projet.
 
 - Démarrer uniquement la base de données :
@@ -36,6 +57,7 @@ Positionnez-vous à la racine du projet.
   docker-compose logs -f <nom_du_service>
 - Accéder à l'API :
   http://localhost:8080/
+- Swagger / OpenAPI : http://localhost:8080/swagger-ui/index.html
 
 ## Gestion du service MySQL local
 - Vérifier l'état : sudo service mysql status  
@@ -70,3 +92,10 @@ Ces champs servent à stocker des informations éventuellement enrichies depuis 
 ## Notes
 - assignedDeveloper est pour l'instant un nom ou un identifiant simple.
 - Ajouter des tests d'intégration pour couvrir les flux d'enrichissement si implémentés.
+
+
+## Contribuer
+-Créer une branche feature/xyz
+-Ajouter des tests unitaires / d’intégration
+-Lancer les tests : ./mvnw test
+-PR ouverte pour revue
