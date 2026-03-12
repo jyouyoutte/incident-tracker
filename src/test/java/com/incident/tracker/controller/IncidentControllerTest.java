@@ -153,7 +153,7 @@ class IncidentControllerTest {
         // Given
         Long id = 1L;
         var response = new IncidentResponseDto(id, "Bug login", "Impossible login", "HIGH", "IN_PROGRESS", null, LocalDateTime.now());
-        IncidentRequestDto request = new IncidentRequestDto();
+        IncidentPatchRequestDto request = new IncidentPatchRequestDto();
         request.setTitle("Bug login");
         request.setDescription("Impossible login");
         request.setPriority("HIGH");

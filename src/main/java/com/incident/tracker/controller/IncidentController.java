@@ -33,7 +33,19 @@ public class IncidentController {
             @ApiResponse(responseCode = "200", description = "Incident created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error on request payload")
     })
-    public IncidentResponseDto create(@Valid @RequestBody IncidentRequestDto request) {
+    public IncidentResponseDto create(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                description = "Incident payload. Allowed values: priority = [LOW, MODERATE, HIGH]; status = [OPEN, IN_PROGRESS, CLOSED]",
+                required = true,
+                content = @io.swagger.v3.oas.annotations.media.Content(
+                    mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(
+                        implementation = IncidentRequestDto.class,
+                        example = "{ \"title\": \"1ere anomalie\", \"description\": \"test swagger\", \"priority\": \"MODERATE\", \"status\": \"OPEN\" }"
+                    )
+                )
+            )
+            @Valid @RequestBody IncidentRequestDto request) {
         logger.info("HTTP POST /api/incidents - Creating new incident with title={}", request.getTitle());
         return service.createIncident(request);
     }
