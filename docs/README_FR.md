@@ -14,15 +14,17 @@ API légère pour gérer des incidents applicatifs : création, suivi de statut,
 ---
 ## Stack Technique
 
-| Composant | Version / Infos                                     |
-|-----------|-----------------------------------------------------|
-| Java | 21                                                  |
-| Spring Boot | 3.5.10                                              |
-| MySQL | 8.0.45                                              |
-| Spring Security | JWT simple (non disponible - ajout ulterieur)       |
-| Docker & Docker Compose | 29.2.1                                              |
-| Tests | Unitaires & intégration                             |
-| CI/CD | GitHub Actions   (non disponible - ajout ulterieur) |
+| Composant                 | Version / Infos                                       |
+|---------------------------|-------------------------------------------------------|
+| Java                      | 21                                                    |
+| Spring Boot               | 3.5.10                                                |
+| MySQL                     | 8.0.45                                                |
+| Spring Security           | JWT simple (non disponible - ajout ulterieur)         |
+| Docker & Docker Compose   | 29.2.1                                                |
+| Tests                     | Unitaires & intégration                               |
+| CI/CD                     | GitHub Actions   (non disponible - ajout ulterieur)   |
+| Documentation             | OpenAPI / Swagger                                     |
+
 
 ---
 
@@ -39,6 +41,17 @@ API légère pour gérer des incidents applicatifs : création, suivi de statut,
 
 > Diagramme simplifié :
 Controller --> Service --> Repository --> MySQL
+
+src
+    └── main
+        └── java
+            └── com.incident.tracker
+                ├── controller
+                ├── service
+                ├── repository
+                ├── domain
+                └── configuration
+
 
 ---
 
@@ -99,3 +112,6 @@ Ces champs servent à stocker des informations éventuellement enrichies depuis 
 -Ajouter des tests unitaires / d’intégration
 -Lancer les tests : ./mvnw test
 -PR ouverte pour revue
+
+## Tests
+Voir la documentation détaillée dans docs/tests.md
