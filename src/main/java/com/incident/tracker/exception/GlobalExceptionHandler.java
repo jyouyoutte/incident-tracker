@@ -18,4 +18,10 @@ public class GlobalExceptionHandler {
     public ErrorResponseDto handleIllegalState(IncidentAlreadyClosedException ex) {
         return new ErrorResponseDto("ALREADY_CLOSED", ex.getMessage());
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponseDto runtimeExceptionHandler(RuntimeException ex) {
+        return new ErrorResponseDto("SERVER_ERROR", ex.getMessage());
+    }
 }
