@@ -1,12 +1,13 @@
 package com.incident.tracker.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.incident.tracker.domain.IncidentPatchRequestDto;
-import com.incident.tracker.domain.IncidentRequestDto;
-import com.incident.tracker.domain.IncidentResponseDto;
-import com.incident.tracker.exception.IncidentAlreadyClosedException;
-import com.incident.tracker.exception.IncidentNotFoundException;
-import com.incident.tracker.service.IncidentService;
+import com.incident.tracker.application.dto.incident.IncidentPatchRequestDto;
+import com.incident.tracker.application.dto.incident.IncidentRequestDto;
+import com.incident.tracker.application.dto.incident.IncidentResponseDto;
+import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
+import com.incident.tracker.domain.exception.IncidentNotFoundException;
+import com.incident.tracker.application.service.IncidentService;
+import com.incident.tracker.infrastruture.web.IncidentController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

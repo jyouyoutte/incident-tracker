@@ -1,9 +1,8 @@
-package com.incident.tracker.controller;
+package com.incident.tracker.infrastruture.web;
 
-import com.incident.tracker.service.DatabaseResetService;
+import com.incident.tracker.application.service.DatabaseResetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

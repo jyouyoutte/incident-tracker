@@ -1,5 +1,8 @@
-package com.incident.tracker.exception;
+package com.incident.tracker.infrastruture.web;
 
+import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
+import com.incident.tracker.domain.exception.IncidentNotFoundException;
+import com.incident.tracker.application.dto.error.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

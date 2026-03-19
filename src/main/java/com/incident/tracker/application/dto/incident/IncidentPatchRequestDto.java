@@ -1,4 +1,4 @@
-package com.incident.tracker.domain;
+package com.incident.tracker.application.dto.incident;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

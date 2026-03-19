@@ -1,4 +1,4 @@
-package com.incident.tracker.model;
+package com.incident.tracker.domain.model;
 
 public interface LabelledEnum {
     String getLabel();

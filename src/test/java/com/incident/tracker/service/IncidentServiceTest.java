@@ -1,14 +1,15 @@
 package com.incident.tracker.service;
 
-import com.incident.tracker.domain.IncidentPatchRequestDto;
-import com.incident.tracker.domain.IncidentRequestDto;
-import com.incident.tracker.domain.IncidentResponseDto;
-import com.incident.tracker.exception.IncidentAlreadyClosedException;
-import com.incident.tracker.exception.IncidentNotFoundException;
+import com.incident.tracker.application.dto.incident.IncidentPatchRequestDto;
+import com.incident.tracker.application.dto.incident.IncidentRequestDto;
+import com.incident.tracker.application.dto.incident.IncidentResponseDto;
+import com.incident.tracker.application.service.IncidentService;
+import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
+import com.incident.tracker.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.mapper.IncidentMapper;
-import com.incident.tracker.model.Incident;
-import com.incident.tracker.model.IncidentStatus;
-import com.incident.tracker.repository.IncidentRepository;
+import com.incident.tracker.domain.model.Incident;
+import com.incident.tracker.domain.model.IncidentStatus;
+import com.incident.tracker.infrastruture.persistence.IncidentRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

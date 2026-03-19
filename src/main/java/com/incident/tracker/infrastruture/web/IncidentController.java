@@ -1,9 +1,9 @@
-package com.incident.tracker.controller;
+package com.incident.tracker.infrastruture.web;
 
-import com.incident.tracker.domain.IncidentPatchRequestDto;
-import com.incident.tracker.domain.IncidentRequestDto;
-import com.incident.tracker.domain.IncidentResponseDto;
-import com.incident.tracker.service.IncidentService;
+import com.incident.tracker.application.dto.incident.IncidentPatchRequestDto;
+import com.incident.tracker.application.dto.incident.IncidentRequestDto;
+import com.incident.tracker.application.dto.incident.IncidentResponseDto;
+import com.incident.tracker.application.service.IncidentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

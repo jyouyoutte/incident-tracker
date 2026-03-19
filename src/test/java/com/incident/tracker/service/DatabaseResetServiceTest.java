@@ -1,6 +1,7 @@
 package com.incident.tracker.service;
 
-import com.incident.tracker.repository.IncidentRepository;
+import com.incident.tracker.application.service.DatabaseResetService;
+import com.incident.tracker.infrastruture.persistence.IncidentRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

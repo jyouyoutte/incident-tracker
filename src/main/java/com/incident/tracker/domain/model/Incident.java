@@ -1,4 +1,4 @@
-package com.incident.tracker.model;
+package com.incident.tracker.domain.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

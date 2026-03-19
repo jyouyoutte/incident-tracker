@@ -1,6 +1,6 @@
-package com.incident.tracker.service;
+package com.incident.tracker.application.service;
 
-import com.incident.tracker.repository.IncidentRepository;
+import com.incident.tracker.infrastruture.persistence.IncidentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

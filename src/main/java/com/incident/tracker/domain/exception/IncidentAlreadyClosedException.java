@@ -1,4 +1,4 @@
-package com.incident.tracker.exception;
+package com.incident.tracker.domain.exception;
 
 /**
  * Exception for conflict status (HTTP 409)

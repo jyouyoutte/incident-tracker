@@ -1,12 +1,12 @@
 package com.incident.tracker.mapper;
 
-import com.incident.tracker.domain.IncidentPatchRequestDto;
-import com.incident.tracker.domain.IncidentRequestDto;
-import com.incident.tracker.domain.IncidentResponseDto;
-import com.incident.tracker.model.Incident;
-import com.incident.tracker.model.IncidentStatus;
-import com.incident.tracker.model.Priority;
-import com.incident.tracker.utils.EnumFinderUtils;
+import com.incident.tracker.application.dto.incident.IncidentPatchRequestDto;
+import com.incident.tracker.application.dto.incident.IncidentRequestDto;
+import com.incident.tracker.application.dto.incident.IncidentResponseDto;
+import com.incident.tracker.domain.model.Incident;
+import com.incident.tracker.domain.model.IncidentStatus;
+import com.incident.tracker.domain.model.Priority;
+import com.incident.tracker.domain.utils.EnumFinderUtils;
 import org.springframework.stereotype.Component;
 
 @Component

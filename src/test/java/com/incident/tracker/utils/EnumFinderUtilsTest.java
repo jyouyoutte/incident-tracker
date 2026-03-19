@@ -1,14 +1,13 @@
 package com.incident.tracker.utils;
 
-import com.incident.tracker.model.IncidentStatus;
-import com.incident.tracker.model.Priority;
+import com.incident.tracker.domain.utils.EnumFinderUtils;
+import com.incident.tracker.domain.model.IncidentStatus;
+import com.incident.tracker.domain.model.Priority;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class EnumFinderUtilsTest {
 
