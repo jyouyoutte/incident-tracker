@@ -48,9 +48,6 @@ public class IncidentIntegrationTest {
         System.out.println("incidentId saved = " + incidentId);
     }
 
-    // ===========================
-    // 2. GET INCIDENT BY ID
-    // ===========================
     @Test
     @DisplayName("Should find the last created incident by id")
     @Order(2)

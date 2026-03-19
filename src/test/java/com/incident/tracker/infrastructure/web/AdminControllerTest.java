@@ -1,7 +1,6 @@
 package com.incident.tracker.infrastructure.web;
 
 import com.incident.tracker.application.service.DatabaseResetService;
-import com.incident.tracker.infrastruture.web.AdminController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

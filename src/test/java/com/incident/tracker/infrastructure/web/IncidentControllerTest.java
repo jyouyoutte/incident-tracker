@@ -7,7 +7,6 @@ import com.incident.tracker.application.dto.incident.IncidentResponseDto;
 import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.application.service.IncidentService;
-import com.incident.tracker.infrastruture.web.IncidentController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

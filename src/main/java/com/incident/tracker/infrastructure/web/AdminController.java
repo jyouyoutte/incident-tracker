@@ -1,4 +1,4 @@
-package com.incident.tracker.infrastruture.web;
+package com.incident.tracker.infrastructure.web;
 
 import com.incident.tracker.application.service.DatabaseResetService;
 import org.slf4j.Logger;

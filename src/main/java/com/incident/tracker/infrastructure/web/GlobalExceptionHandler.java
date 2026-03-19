@@ -1,4 +1,4 @@
-package com.incident.tracker.infrastruture.web;
+package com.incident.tracker.infrastructure.web;
 
 import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.domain.exception.IncidentNotFoundException;

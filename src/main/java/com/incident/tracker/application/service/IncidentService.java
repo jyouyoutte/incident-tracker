@@ -5,10 +5,10 @@ import com.incident.tracker.application.dto.incident.IncidentRequestDto;
 import com.incident.tracker.application.dto.incident.IncidentResponseDto;
 import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.domain.exception.IncidentNotFoundException;
+import com.incident.tracker.domain.port.IncidentRepositoryPort;
 import com.incident.tracker.mapper.IncidentMapper;
 import com.incident.tracker.domain.model.Incident;
 import com.incident.tracker.domain.model.IncidentStatus;
-import com.incident.tracker.infrastruture.persistence.IncidentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,10 +19,10 @@ import java.util.List;
 @Service
 public class IncidentService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final IncidentRepository incidentRepository;
+    private final IncidentRepositoryPort incidentRepository;
     private final IncidentMapper mapper;
 
-    public IncidentService(IncidentRepository incidentRepository, IncidentMapper mapper) {
+    public IncidentService(IncidentRepositoryPort incidentRepository, IncidentMapper mapper) {
         this.incidentRepository = incidentRepository;
         this.mapper = mapper;
     }

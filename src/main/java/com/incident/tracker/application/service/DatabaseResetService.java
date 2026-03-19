@@ -1,6 +1,6 @@
 package com.incident.tracker.application.service;
 
-import com.incident.tracker.infrastruture.persistence.IncidentRepository;
+import com.incident.tracker.domain.port.IncidentRepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class DatabaseResetService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final IncidentRepository incidentRepository;
+    private final IncidentRepositoryPort incidentRepository;
 
-    public DatabaseResetService(IncidentRepository incidentRepository) {
+    public DatabaseResetService(IncidentRepositoryPort incidentRepository) {
         this.incidentRepository = incidentRepository;
     }
 

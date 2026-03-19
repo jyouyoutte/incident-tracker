@@ -1,7 +1,6 @@
 package com.incident.tracker.application.service;
 
-import com.incident.tracker.application.service.DatabaseResetService;
-import com.incident.tracker.infrastruture.persistence.IncidentRepository;
+import com.incident.tracker.domain.port.IncidentRepositoryPort;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class DatabaseResetServiceTest {
 
     @Mock
-    private IncidentRepository incidentRepository;
+    private IncidentRepositoryPort incidentRepository;
 
     @InjectMocks
     private DatabaseResetService databaseResetService;

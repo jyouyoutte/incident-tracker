@@ -3,13 +3,12 @@ package com.incident.tracker.application.service;
 import com.incident.tracker.application.dto.incident.IncidentPatchRequestDto;
 import com.incident.tracker.application.dto.incident.IncidentRequestDto;
 import com.incident.tracker.application.dto.incident.IncidentResponseDto;
-import com.incident.tracker.application.service.IncidentService;
 import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.domain.exception.IncidentNotFoundException;
+import com.incident.tracker.domain.port.IncidentRepositoryPort;
 import com.incident.tracker.mapper.IncidentMapper;
 import com.incident.tracker.domain.model.Incident;
 import com.incident.tracker.domain.model.IncidentStatus;
-import com.incident.tracker.infrastruture.persistence.IncidentRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,7 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 class IncidentServiceTest {
 
     @Mock
-    private IncidentRepository incidentRepository;
+    private IncidentRepositoryPort incidentRepository;
 
     @Mock
     private IncidentMapper mapper;
