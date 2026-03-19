@@ -1,4 +1,4 @@
-package com.incident.tracker.service;
+package com.incident.tracker.application.service;
 
 import com.incident.tracker.application.service.DatabaseResetService;
 import com.incident.tracker.infrastruture.persistence.IncidentRepository;

@@ -1,4 +1,4 @@
-package com.incident.tracker.controller;
+package com.incident.tracker.infrastructure.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.incident.tracker.application.dto.incident.IncidentPatchRequestDto;

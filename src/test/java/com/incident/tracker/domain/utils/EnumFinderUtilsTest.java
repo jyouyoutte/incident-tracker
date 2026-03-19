@@ -1,4 +1,4 @@
-package com.incident.tracker.utils;
+package com.incident.tracker.domain.utils;
 
 import com.incident.tracker.domain.utils.EnumFinderUtils;
 import com.incident.tracker.domain.model.IncidentStatus;

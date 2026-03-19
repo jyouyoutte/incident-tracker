@@ -1,4 +1,4 @@
-package com.incident.tracker.service;
+package com.incident.tracker.application.service;
 
 import com.incident.tracker.application.dto.incident.IncidentPatchRequestDto;
 import com.incident.tracker.application.dto.incident.IncidentRequestDto;

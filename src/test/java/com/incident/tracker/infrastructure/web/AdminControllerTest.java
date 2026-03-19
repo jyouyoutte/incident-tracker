@@ -1,4 +1,4 @@
-package com.incident.tracker.controller;
+package com.incident.tracker.infrastructure.web;
 
 import com.incident.tracker.application.service.DatabaseResetService;
 import com.incident.tracker.infrastruture.web.AdminController;

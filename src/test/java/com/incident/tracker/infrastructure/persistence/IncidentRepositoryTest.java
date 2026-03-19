@@ -1,4 +1,4 @@
-package com.incident.tracker.repository;
+package com.incident.tracker.infrastructure.persistence;
 
 import com.incident.tracker.domain.model.Incident;
 import com.incident.tracker.domain.model.IncidentStatus;
