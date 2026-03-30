@@ -32,6 +32,8 @@
 		<maven-failsafe-plugin.version>3.5.1</maven-failsafe-plugin.version>
 		<spring-boot-maven-plugin.version>3.5.10</spring-boot-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+		<jjwt.version>0.13.0</jjwt.version>
+
 	</properties>
 	<dependencies>
 		<dependency>
@@ -85,6 +87,34 @@
 			<artifactId>rest-assured</artifactId>
 			<version>5.5.6</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- jjwt-api: provides the main JWT interfaces and classes used to create, parse, and validate JWTs -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+
+		<!-- jjwt-impl: runtime implementation of the JWT API (signing, parsing, validation logic) -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<scope>runtime</scope>
+			<version>${jjwt.version}</version>
+		</dependency>
+
+		<!-- jjwt-jackson: enables JSON serialization/deserialization for JWTs using Jackson -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<scope>runtime</scope>
+			<version>${jjwt.version}</version>
 		</dependency>
 
 	</dependencies>
@@ -147,6 +177,7 @@
 				<configuration>
 					<excludes>
 						<exclude>com/incident/tracker/domain/**</exclude>
+						<exclude>com/incident/tracker/application/infrastructure/security/**</exclude>
 						<exclude>com/incident/tracker/mapper/**</exclude>
 						<exclude>com/incident/tracker/model/**</exclude>
 					</excludes>

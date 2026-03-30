@@ -22,3 +22,7 @@ logging:
     org.springframework.web: DEBUG    # HTTP request details
     org.hibernate.SQL: DEBUG          # To see SQL queries
 
+app:
+  jwt:
+    expiration-time-ms: 900000 # 15 minutes in milliseconds
+    secret: rgqo5hw8cvJBb4d8KXAOyIolqXf39h3quDAEsvm27iQPYBhBFPp5AVbizQ1YqCF3
