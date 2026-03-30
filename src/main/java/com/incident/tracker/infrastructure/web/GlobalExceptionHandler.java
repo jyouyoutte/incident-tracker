@@ -3,7 +3,9 @@ package com.incident.tracker.infrastructure.web;
 import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.application.dto.error.ErrorResponseDto;
+import com.incident.tracker.infrastructure.security.exception.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,5 +28,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponseDto runtimeExceptionHandler(RuntimeException ex) {
         return new ErrorResponseDto("SERVER_ERROR", ex.getMessage());
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponseDto handleIllegalState(UserAlreadyExistsException ex) {
+        return new ErrorResponseDto("USER_ALREADY_EXISTS", ex.getMessage());
     }
 }

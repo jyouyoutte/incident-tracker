@@ -1,10 +1,13 @@
 package com.incident.tracker.infrastructure.web;
 
 import com.incident.tracker.application.service.DatabaseResetService;
+import com.incident.tracker.infrastructure.security.provider.JwtTokenProvider;
+import com.incident.tracker.infrastructure.security.service.CustomUserDetailsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -15,6 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(AdminController.class)
 class AdminControllerTest {
 
@@ -23,6 +27,12 @@ class AdminControllerTest {
 
     @MockitoBean
     private DatabaseResetService service;
+
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     @DisplayName("DELETE /api/admin/reset - Success")

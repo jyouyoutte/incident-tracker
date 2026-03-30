@@ -7,9 +7,12 @@ import com.incident.tracker.application.dto.incident.IncidentResponseDto;
 import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.application.service.IncidentService;
+import com.incident.tracker.infrastructure.security.provider.JwtTokenProvider;
+import com.incident.tracker.infrastructure.security.service.CustomUserDetailsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -23,7 +26,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(IncidentController.class)
 class IncidentControllerTest {
 
@@ -35,6 +38,13 @@ class IncidentControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    /** @MockBean adds dummy beans to the test context, satisfying the JwtAuthenticationFilter injection without loading the entire security configuration.*/
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     @DisplayName("POST /api/incidents - Success")

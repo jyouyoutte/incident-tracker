@@ -1,6 +1,7 @@
 package com.incident.tracker.integration;
 
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,11 +12,42 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
 public class IncidentIntegrationTest {
     @LocalServerPort
     int port;
 
     private static int incidentId;
+    private String token;
+
+    @BeforeAll
+    void authenticate() {
+        RestAssured.port = port;
+
+        // 🔐 Call real login
+        token = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body("""
+                        {
+                            "username": "admin",
+                            "password": "admin"
+                        }
+                        """)
+                .when()
+                .post("/api/auth/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("token");
+
+        System.out.println("JWT Token = " + token);
+
+        RestAssured.requestSpecification = new RequestSpecBuilder()
+                .addHeader("Authorization", "Bearer " + token)
+                .setContentType(ContentType.JSON)
+                .build();
+    }
 
     @BeforeEach
     void setup() {
