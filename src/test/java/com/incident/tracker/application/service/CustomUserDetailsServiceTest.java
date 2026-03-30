@@ -29,11 +29,11 @@ class CustomUserDetailsServiceTest {
     private CustomUserDetailsService customUserDetailsService;
 
     @Nested
-    @DisplayName("Méthode loadUserByUsername")
+    @DisplayName("Method loadUserByUsername")
     class LoadUserByUsername {
 
         @Test
-        @DisplayName("Doit retourner UserDetails quand l'utilisateur existe")
+        @DisplayName("Should return UserDetails when the user exists")
         void shouldReturnUserDetailsWhenUserExists() {
             var user = new User();
             user.setId(1L);
@@ -54,7 +54,7 @@ class CustomUserDetailsServiceTest {
         }
 
         @Test
-        @DisplayName("Doit lancer UsernameNotFoundException quand l'utilisateur n'existe pas")
+        @DisplayName("Should throw UsernameNotFoundException when the user does not exist")
         void shouldThrowWhenUserNotFound() {
             Mockito.when(userRepositoryPort.findByUsername("unknown")).thenReturn(Optional.empty());
 

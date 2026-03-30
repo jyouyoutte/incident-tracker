@@ -20,7 +20,7 @@ class DatabaseResetServiceTest {
     private DatabaseResetService databaseResetService;
 
     @Test
-    @DisplayName("Doit appeler deleteAll sur le repository")
+    @DisplayName("Should call deleteAll on the repository")
     void shouldCallDeleteAllOnRepository() {
         databaseResetService.resetDatabase();
 
@@ -28,7 +28,7 @@ class DatabaseResetServiceTest {
     }
 
     @Test
-    @DisplayName("Doit remonter l'exception si deleteAll échoue")
+    @DisplayName("Should propagate the exception if deleteAll fails")
     void shouldPropagateExceptionWhenDeleteAllFails() {
         Mockito.doThrow(new RuntimeException("db error")).when(incidentRepository).deleteAll();
 

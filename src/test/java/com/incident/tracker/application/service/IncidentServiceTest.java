@@ -39,11 +39,11 @@ class IncidentServiceTest {
     private IncidentService incidentService;
 
     @Nested
-    @DisplayName("Méthode createIncident")
+    @DisplayName("Method createIncident")
     class CreateIncident {
 
         @Test
-        @DisplayName("Doit mapper, sauvegarder et retourner le DTO de réponse")
+        @DisplayName("Should map, save and return the response DTO")
         void shouldCreateAndReturnDto() {
             // Given
             var request = new IncidentRequestDto();
@@ -73,7 +73,7 @@ class IncidentServiceTest {
     class GetAllIncidents {
 
         @Test
-        @DisplayName("Doit retourner une liste de DTOs quand des incidents existent")
+        @DisplayName("Should return a list of DTOs when incidents exist")
         void shouldReturnListOfDtos() {
             // Given
             var incident = new Incident();
@@ -135,11 +135,11 @@ class IncidentServiceTest {
     }
 
     @Nested
-    @DisplayName("Méthode closeIncident")
+    @DisplayName("Method closeIncident")
     class CloseIncident {
 
         @Test
-        @DisplayName("Succès : Change le statut en CLOSED et sauvegarde")
+        @DisplayName("Success: Change status to CLOSED and save")
         void shouldCloseIncidentSuccessfully() {
             // Given
             Long id = 1L;
@@ -165,7 +165,7 @@ class IncidentServiceTest {
         }
 
         @Test
-        @DisplayName("Erreur : Lance une RuntimeException si l'ID n'existe pas")
+        @DisplayName("Error: Throw IncidentNotFoundException if the ID does not exist")
         void shouldThrowExceptionWhenNotFound() {
             Mockito.when(incidentRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -177,7 +177,7 @@ class IncidentServiceTest {
         }
 
         @Test
-        @DisplayName("Erreur : Lance une IllegalStateException si l'incident est déjà CLOSED")
+        @DisplayName("Error: Throw IncidentAlreadyClosedException if the incident is already CLOSED")
         void shouldThrowExceptionWhenAlreadyClosed() {
             // Given
             var incident = new Incident();
