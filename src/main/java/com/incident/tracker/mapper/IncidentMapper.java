@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 public class IncidentMapper {
 
     public Incident toEntity(IncidentRequestDto dto) {
-        Incident entity = new Incident();
-
         return Incident.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
