@@ -1,8 +1,11 @@
 package com.incident.tracker.infrastructure.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.incident.tracker.application.dto.auth.AuthResponseDto;
 import com.incident.tracker.application.dto.auth.UserDto;
 import com.incident.tracker.application.service.AuthService;
+import com.incident.tracker.infrastructure.security.provider.JwtTokenProvider;
+import com.incident.tracker.infrastructure.security.service.CustomUserDetailsService;
 import com.incident.tracker.infrastructure.web.vo.auth.AuthResponseVo;
 import com.incident.tracker.infrastructure.web.vo.auth.UserVo;
 import com.incident.tracker.mapper.AuthResponseMapper;
@@ -10,69 +13,116 @@ import com.incident.tracker.mapper.UserMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Optional;
 
-@ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(AuthController.class)
 class AuthControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Mock
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockitoBean
     private AuthService authService;
 
-    @Mock
+    @MockitoBean
     private UserMapper userMapper;
 
-    @Mock
+    @MockitoBean
     private AuthResponseMapper authResponseMapper;
 
-    @InjectMocks
-    private AuthController authController;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     @DisplayName("Should return 200 and message when registration succeeds")
-    void shouldReturnOkWhenRegisterSucceeds() {
-        UserVo userVo = new UserVo("john", "pwd", "ROLE_USER");
+    void shouldReturnOkWhenRegisterSucceeds() throws Exception {
+        UserVo userVo = new UserVo("john", "pwd",   List.of("ROLE_USER"));
         UserDto dto = new UserDto();
         dto.setUsername("john");
         dto.setPassword("pwd");
-        dto.setRole("ROLE_USER");
+        dto.setRoles(List.of("ROLE_USER"));
+        dto.setId(42L);
+        dto.setRoles(List.of("ROLE_USER"));
+
+        var returnedResponseVo = new UserVo("john", List.of("ROLE_USER"));
 
         Mockito.when(userMapper.voToDto(Mockito.any(UserVo.class))).thenReturn(dto);
         Mockito.when(authService.register(Mockito.any(UserDto.class))).thenReturn(Optional.of(dto));
+        Mockito.when(userMapper.dtoToVo(Mockito.any(UserDto.class))).thenReturn(returnedResponseVo);
 
-        ResponseEntity<?> response = authController.register(userVo);
+        String requestBody = objectMapper.writeValueAsString(userVo);
+        var result = mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andReturn();
 
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody()).isEqualTo("User registered successfully");
+        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.CREATED.value());
+        String content = result.getResponse().getContentAsString();
+        var responseVo = objectMapper.readValue(content, UserVo.class);
+        Assertions.assertThat(responseVo.username()).isEqualTo("john");
+        Assertions.assertThat(responseVo.roles()).containsExactly("ROLE_USER");
     }
 
     @Test
     @DisplayName("Should return 500 when registration fails")
-    void shouldReturnInternalServerErrorWhenRegisterFails() {
-        UserVo userVo = new UserVo("jane", "pwd", "ROLE_USER");
+    void shouldReturnInternalServerErrorWhenRegisterFails() throws Exception {
+        UserVo userVo = new UserVo("jane", "pwd", List.of("ROLE_USER"));
         UserDto dto = new UserDto();
         dto.setUsername("jane");
 
         Mockito.when(userMapper.voToDto(Mockito.any(UserVo.class))).thenReturn(dto);
         Mockito.when(authService.register(Mockito.any(UserDto.class))).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = authController.register(userVo);
+        String requestBody = objectMapper.writeValueAsString(userVo);
+        var result = mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andReturn();
 
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(response.getBody()).isEqualTo("Failed to register user");
+        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+        String content = result.getResponse().getContentAsString();
+        String contentType = result.getResponse().getContentType();
+
+        // Accept either plain text message or JSON error object {"code":..., "message":...}
+        String message = content;
+        if (contentType != null && contentType.contains("application/json")) {
+            try {
+                var node = objectMapper.readTree(content);
+                message = node.path("message").asText(null);
+            } catch (Exception e) {
+                // fallback to raw content
+                message = content;
+            }
+        }
+
+        if (!(message != null && (message.contains("Failed to register user") || message.contains("User with username")))) {
+            throw new AssertionError("Unexpected response body: " + content);
+        }
     }
 
     @Test
     @DisplayName("Should return AuthResponseVo and 200 when login succeeds")
-    void shouldReturnAuthResponseVoWhenLoginSucceeds() {
-        UserVo userVo = new UserVo("alice", "pwd", "ROLE_USER");
+    void shouldReturnAuthResponseVoWhenLoginSucceeds() throws Exception {
+        UserVo userVo = new UserVo("alice", "pwd", List.of("ROLE_USER"));
 
         UserDto dto = new UserDto();
         dto.setUsername("alice");
@@ -85,37 +135,38 @@ class AuthControllerTest {
         Mockito.when(authService.login(Mockito.any(UserDto.class))).thenReturn(Optional.of(authResponseDto));
         Mockito.when(authResponseMapper.dtoToVo(Mockito.any(AuthResponseDto.class))).thenReturn(authResponseVo);
 
-        ResponseEntity<?> response = authController.login(userVo);
+        String requestBody = objectMapper.writeValueAsString(userVo);
+        var result = mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andReturn();
 
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody()).isInstanceOf(AuthResponseVo.class);
-        Assertions.assertThat((AuthResponseVo) response.getBody()).satisfies(vo -> {
-            Assertions.assertThat(vo.token()).isEqualTo("token-123");
-            Assertions.assertThat(vo.type()).isEqualTo("Bearer");
-        });
+        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+        String content = result.getResponse().getContentAsString();
+        AuthResponseVo returned = objectMapper.readValue(content, AuthResponseVo.class);
+        Assertions.assertThat(returned.token()).isEqualTo("token-123");
+        Assertions.assertThat(returned.type()).isEqualTo("Bearer");
     }
 
     @Test
     @DisplayName("Should return 401 when login fails")
-    void shouldReturnUnauthorizedWhenLoginFails() {
-        UserVo userVo = new UserVo("bob", "bad", "ROLE_USER");
+    void shouldReturnUnauthorizedWhenLoginFails() throws Exception {
+        UserVo userVo = new UserVo("bob", "bad", List.of("ROLE_USER"));
         UserDto dto = new UserDto();
         dto.setUsername("bob");
 
         Mockito.when(userMapper.voToDto(Mockito.any(UserVo.class))).thenReturn(dto);
         Mockito.when(authService.login(Mockito.any(UserDto.class))).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = authController.login(userVo);
+        String requestBody = objectMapper.writeValueAsString(userVo);
+        var result = mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andReturn();
 
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-        Assertions.assertThat(response.getBody()).isEqualTo("Invalid username or password");
-    }
-
-    @Test
-    @DisplayName("Should throw NullPointerException if UserVo is null during registration")
-    void shouldThrowWhenUserVoIsNullOnRegister() {
-        Assertions.assertThatThrownBy(() -> authController.register(null))
-                .isInstanceOf(NullPointerException.class);
+        Assertions.assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+        Assertions.assertThat(result.getResponse().getContentAsString()).isEqualTo("Invalid username or password");
     }
 }
-

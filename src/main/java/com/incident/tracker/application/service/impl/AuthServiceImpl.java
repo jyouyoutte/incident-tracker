@@ -70,13 +70,29 @@ public class AuthServiceImpl implements AuthService {
             logger.warn("User with username={} already exists", userDto.getUsername());
              throw new UserAlreadyExistsException(userDto.getUsername());
         }
-        RoleDto roleDto = roleMapper.entityToDto(roleRepositoryPort.findByName(userDto.getRole())
-                .orElseThrow(() -> new UserNotCreatedException("Role not found: " + userDto.getRole())
-                ));
+        // Determine requested role names (support multiple roles)
+        List<String> requestedRoles;
+        if (userDto.getRoles() != null && !userDto.getRoles().isEmpty()) {
+            requestedRoles = userDto.getRoles();
+        } else {
+            throw new UserNotCreatedException("No role specified for user: " + userDto.getUsername());
+        }
 
+        // Resolve role entities
+        List<Role> roleEntities = requestedRoles.stream()
+                .map(rn -> roleRepositoryPort.findByName(rn)
+                        .orElseThrow(() -> new UserNotCreatedException("Role not found: " + rn)))
+                .toList();
+
+        // encode password
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        Optional<User> newUser = repositoryPort.saveUser(userMapper.dtoToEntity(userDto));
-        userDto.setRoles(List.of(roleDto.name()));
+
+        // Map to entity and attach role entities so the join table users_roles is populated
+        User userEntity = userMapper.dtoToEntity(userDto);
+        userEntity.setRoles(roleEntities);
+
+        Optional<User> newUser = repositoryPort.saveUser(userEntity);
+        userDto.setRoles(roleEntities.stream().map(Role::getName).toList());
         if(newUser.isEmpty()){
             logger.error("Failed to register user with username={}", userDto.getUsername());
             throw new UserNotCreatedException("User with username " + userDto.getUsername() + " not created: " + "An unexpected error occurred during user creation. Please try again later.");

@@ -39,7 +39,6 @@ class CustomUserDetailsServiceTest {
             user.setId(1L);
             user.setUsername("bruno");
             user.setPassword("secret");
-            user.setRole("ROLE_USER");
             user.setRoles(List.of(new Role(1L, "ROLE_USER"))) ;
 
             Mockito.when(userRepositoryPort.findByUsername("bruno")).thenReturn(Optional.of(user));

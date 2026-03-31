@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
 import java.util.Optional;
 
 @ActiveProfiles("test")
@@ -25,7 +26,6 @@ class UserRepositoryTest {
         user.setName("Bruno User");
         user.setUsername("bruno");
         user.setPassword("bruno");
-        user.setRole("ROLE_USER");
 
         userRepository.saveAndFlush(user);
         Optional<User> found = userRepository.findByUsername("bruno");

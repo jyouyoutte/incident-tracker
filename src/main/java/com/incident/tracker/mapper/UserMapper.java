@@ -1,6 +1,7 @@
 package com.incident.tracker.mapper;
 
 import com.incident.tracker.application.dto.auth.UserDto;
+import com.incident.tracker.domain.model.Role;
 import com.incident.tracker.domain.model.User;
 import com.incident.tracker.infrastructure.web.vo.auth.UserVo;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,12 @@ public class UserMapper {
         return User.builder()
                 .username(dto.getUsername())
                 .password(dto.getPassword())
-                .role(dto.getRole())
+                .roles(dto.getRoles() == null ? null : dto.getRoles().stream().map(name -> {
+                    // Role will be resolved/attached by service; here create minimal Role with name
+                    Role r = new Role();
+                    r.setName(name);
+                    return r;
+                }).toList())
                 .build();
     }
 
@@ -25,7 +31,7 @@ public class UserMapper {
         if(dto == null) {
             return null;
         }
-        return new UserVo(dto.getUsername(), dto.getPassword(), dto.getRole());
+        return new UserVo(dto.getUsername(), dto.getRoles());
     }
 
     public UserDto entityToDto(User user) {
@@ -33,9 +39,10 @@ public class UserMapper {
             return null;
         }
         UserDto dto = new UserDto();
+        dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setPassword(user.getPassword());
-        dto.setRole(user.getRole());
+        dto.setRoles(user.getRoles() == null ? null : user.getRoles().stream().map(Role::getName).toList());
         return dto;
     }
 
@@ -46,7 +53,7 @@ public class UserMapper {
         UserDto dto = new UserDto();
         dto.setUsername(vo.username());
         dto.setPassword(vo.password());
-        dto.setRole(vo.role());
+        dto.setRoles(vo.roles());
         return dto;
     }
 }

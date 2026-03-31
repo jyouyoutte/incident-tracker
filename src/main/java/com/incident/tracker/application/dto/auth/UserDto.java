@@ -8,8 +8,8 @@ import java.util.List;
 @Getter
 @Setter
 public class UserDto {
-    public String username;
-    public String password;
-    public String role;
-    public List<String> roles;
+    private Long id;
+    private String username;
+    private String password;
+    private List<String> roles;
 }

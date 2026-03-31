@@ -4,6 +4,7 @@ import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.application.dto.error.ErrorResponseDto;
 import com.incident.tracker.infrastructure.security.exception.UserAlreadyExistsException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,5 +35,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponseDto handleIllegalState(UserAlreadyExistsException ex) {
         return new ErrorResponseDto("USER_ALREADY_EXISTS", ex.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponseDto handleAccessDenied(AccessDeniedException ex) {
+        return new ErrorResponseDto("ACCESS_DENIED", "Access Denied");
     }
 }

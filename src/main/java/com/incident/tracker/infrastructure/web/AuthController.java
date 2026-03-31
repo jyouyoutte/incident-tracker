@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,14 +33,19 @@ public class AuthController {
         this.authResponseMapper = authResponseMapper;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserVo userVo) {
         logger.info("HTTP POST /api/auth/register - Registering new user with username={}", userVo.username());
         Optional<UserDto> newUser = authService.register(userMapper.voToDto(userVo));
         if(newUser.isPresent()){
-            return ResponseEntity.ok("User registered successfully");
+            // Map DTO to a response VO that contains id and roles (no password)
+            var responseVo = userMapper.dtoToVo(newUser.get());
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseVo);
         }else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to register user");
+            // Return structured error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new com.incident.tracker.application.dto.error.ErrorResponseDto("SERVER_ERROR", "Failed to register user"));
         }
     }
 
