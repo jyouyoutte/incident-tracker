@@ -1,4 +1,4 @@
-package com.incident.tracker.infrastructure.persistence;
+package com.incident.tracker.infrastructure.persistence.auth;
 
 import com.incident.tracker.domain.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,13 +1,17 @@
 package com.incident.tracker.application.service.impl;
 
 import com.incident.tracker.application.dto.auth.AuthResponseDto;
+import com.incident.tracker.application.dto.auth.RoleDto;
 import com.incident.tracker.application.dto.auth.UserDto;
 import com.incident.tracker.application.service.AuthService;
+import com.incident.tracker.domain.model.Role;
 import com.incident.tracker.domain.model.User;
-import com.incident.tracker.domain.port.UserRepositoryPort;
+import com.incident.tracker.domain.port.auth.RoleRepositoryPort;
+import com.incident.tracker.domain.port.auth.UserRepositoryPort;
 import com.incident.tracker.infrastructure.security.exception.UserAlreadyExistsException;
 import com.incident.tracker.infrastructure.security.exception.UserNotCreatedException;
 import com.incident.tracker.infrastructure.security.provider.JwtTokenProvider;
+import com.incident.tracker.mapper.RoleMapper;
 import com.incident.tracker.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,14 +33,23 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
+    private final RoleMapper roleMapper;
+    private final RoleRepositoryPort roleRepositoryPort;
 
-    public AuthServiceImpl(UserRepositoryPort repositoryPort, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager, UserMapper mapper) {
+    public AuthServiceImpl(UserRepositoryPort repositoryPort,
+                           PasswordEncoder passwordEncoder,
+                           JwtTokenProvider jwtTokenProvider,
+                           AuthenticationManager authenticationManager,
+                           UserMapper userMapper,
+                           RoleMapper roleMapper, RoleRepositoryPort roleRepositoryPort) {
         this.repositoryPort = repositoryPort;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManager = authenticationManager;
-        this.mapper = mapper;
+        this.userMapper = userMapper;
+        this.roleMapper = roleMapper;
+        this.roleRepositoryPort = roleRepositoryPort;
     }
 
     @Override
@@ -45,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> user = repositoryPort.findByUsername(username);
         if(user.isPresent()){
             logger.info("User with username={}  found", username);
-            return Optional.of(mapper.entityToDto(user.get()));
+            return Optional.of(userMapper.entityToDto(user.get()));
         }
         logger.info("User with username={} not found", username);
         return Optional.empty();
@@ -58,15 +70,19 @@ public class AuthServiceImpl implements AuthService {
             logger.warn("User with username={} already exists", userDto.getUsername());
              throw new UserAlreadyExistsException(userDto.getUsername());
         }
+        RoleDto roleDto = roleMapper.entityToDto(roleRepositoryPort.findByName(userDto.getRole())
+                .orElseThrow(() -> new UserNotCreatedException("Role not found: " + userDto.getRole())
+                ));
+
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        Optional<User> newUser = repositoryPort.saveUser(mapper.dtoToEntity(userDto));
+        Optional<User> newUser = repositoryPort.saveUser(userMapper.dtoToEntity(userDto));
+        userDto.setRoles(List.of(roleDto.name()));
         if(newUser.isEmpty()){
             logger.error("Failed to register user with username={}", userDto.getUsername());
-            throw new UserNotCreatedException(userDto.getUsername());
+            throw new UserNotCreatedException("User with username " + userDto.getUsername() + " not created: " + "An unexpected error occurred during user creation. Please try again later.");
         }
         logger.info("User with username={} registered successfully", userDto.getUsername());
-        return Optional.of(mapper.entityToDto(newUser.get()));
-
+        return Optional.of(userMapper.entityToDto(newUser.get()));
     }
 
     @Override
@@ -80,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
                 logger.info("Authentication successful for username={}", userDto.getUsername());
 
                String token = jwtTokenProvider.generateToken((UserDetails) authentication.getPrincipal());
-               logger.info("JWT token generated for username={}", userDto.getUsername());;
+               logger.info("JWT token generated for username={}", userDto.getUsername());
                return Optional.of(new AuthResponseDto(token, "Bearer"));
             }
         }

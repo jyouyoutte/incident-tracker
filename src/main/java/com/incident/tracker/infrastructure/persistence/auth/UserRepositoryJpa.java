@@ -1,7 +1,7 @@
-package com.incident.tracker.infrastructure.persistence;
+package com.incident.tracker.infrastructure.persistence.auth;
 
 import com.incident.tracker.domain.model.User;
-import com.incident.tracker.domain.port.UserRepositoryPort;
+import com.incident.tracker.domain.port.auth.UserRepositoryPort;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

@@ -1,12 +1,15 @@
 package com.incident.tracker.application.service.impl;
 
 import com.incident.tracker.application.dto.auth.AuthResponseDto;
+import com.incident.tracker.application.dto.auth.RoleDto;
 import com.incident.tracker.application.dto.auth.UserDto;
 import com.incident.tracker.domain.model.User;
-import com.incident.tracker.domain.port.UserRepositoryPort;
+import com.incident.tracker.domain.port.auth.RoleRepositoryPort;
+import com.incident.tracker.domain.port.auth.UserRepositoryPort;
 import com.incident.tracker.infrastructure.security.exception.UserAlreadyExistsException;
 import com.incident.tracker.infrastructure.security.exception.UserNotCreatedException;
 import com.incident.tracker.infrastructure.security.provider.JwtTokenProvider;
+import com.incident.tracker.mapper.RoleMapper;
 import com.incident.tracker.mapper.UserMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +24,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.mockito.ArgumentCaptor;
+import com.incident.tracker.domain.model.Role;
 
 import java.util.Optional;
 
@@ -28,7 +33,7 @@ import java.util.Optional;
 class AuthServiceImplTest {
 
     @Mock
-    private UserRepositoryPort repositoryPort;
+    private UserRepositoryPort userRepositoryPort;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -42,6 +47,12 @@ class AuthServiceImplTest {
     @Mock
     private UserMapper mapper;
 
+    @Mock
+    private RoleRepositoryPort roleRepositoryPort;
+
+    @Mock
+    private RoleMapper roleMapper;
+
     @InjectMocks
     private AuthServiceImpl authService;
 
@@ -54,7 +65,7 @@ class AuthServiceImplTest {
         var dto = new UserDto();
         dto.setUsername("bruno");
 
-        Mockito.when(repositoryPort.findByUsername("bruno")).thenReturn(Optional.of(user));
+        Mockito.when(userRepositoryPort.findByUsername("bruno")).thenReturn(Optional.of(user));
         Mockito.when(mapper.entityToDto(user)).thenReturn(dto);
 
         Optional<UserDto> result = authService.findByUsername("bruno");
@@ -66,7 +77,7 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("Should return empty when user not found")
     void shouldReturnEmptyWhenUserNotFound() {
-        Mockito.when(repositoryPort.findByUsername("unknown")).thenReturn(Optional.empty());
+        Mockito.when(userRepositoryPort.findByUsername("unknown")).thenReturn(Optional.empty());
 
         Optional<UserDto> result = authService.findByUsername("unknown");
 
@@ -79,6 +90,7 @@ class AuthServiceImplTest {
         var dto = new UserDto();
         dto.setUsername("newuser");
         dto.setPassword("raw");
+        dto.setRole("ROLE_USER");
 
         var entity = new User();
         entity.setUsername("newuser");
@@ -87,10 +99,14 @@ class AuthServiceImplTest {
         saved.setId(2L);
         saved.setUsername("newuser");
 
-        Mockito.when(repositoryPort.findByUsername("newuser")).thenReturn(Optional.empty());
+        Mockito.when(userRepositoryPort.findByUsername("newuser")).thenReturn(Optional.empty());
+        // mock role lookup and mapping required by register()
+        var roleEntity = new Role(null, "ROLE_USER");
+        Mockito.when(roleRepositoryPort.findByName("ROLE_USER")).thenReturn(Optional.of(roleEntity));
+        Mockito.when(roleMapper.entityToDto(roleEntity)).thenReturn(new RoleDto(1L, "ROLE_USER"));
         Mockito.when(passwordEncoder.encode("raw")).thenReturn("encoded");
         Mockito.when(mapper.dtoToEntity(Mockito.any(UserDto.class))).thenReturn(entity);
-        Mockito.when(repositoryPort.saveUser(entity)).thenReturn(Optional.of(saved));
+        Mockito.when(userRepositoryPort.saveUser(entity)).thenReturn(Optional.of(saved));
         Mockito.when(mapper.entityToDto(saved)).thenReturn(dto);
 
         Optional<UserDto> result = authService.register(dto);
@@ -98,7 +114,7 @@ class AuthServiceImplTest {
         Assertions.assertThat(result).isPresent();
         Assertions.assertThat(result.get().getUsername()).isEqualTo("newuser");
         Mockito.verify(passwordEncoder).encode("raw");
-        Mockito.verify(repositoryPort).saveUser(entity);
+        Mockito.verify(userRepositoryPort).saveUser(entity);
     }
 
     @Test
@@ -109,7 +125,7 @@ class AuthServiceImplTest {
 
         var existingUser = new User();
         existingUser.setUsername("exist");
-        Mockito.when(repositoryPort.findByUsername("exist")).thenReturn(Optional.of(existingUser));
+        Mockito.when(userRepositoryPort.findByUsername("exist")).thenReturn(Optional.of(existingUser));
         Mockito.when(mapper.entityToDto(existingUser)).thenReturn(dto);
 
         Assertions.assertThatThrownBy(() -> authService.register(dto))
@@ -123,14 +139,19 @@ class AuthServiceImplTest {
         var dto = new UserDto();
         dto.setUsername("willfail");
         dto.setPassword("pwd");
+        dto.setRole("ROLE_USER");
 
         var entity = new User();
         entity.setUsername("willfail");
 
-        Mockito.when(repositoryPort.findByUsername("willfail")).thenReturn(Optional.empty());
+        Mockito.when(userRepositoryPort.findByUsername("willfail")).thenReturn(Optional.empty());
+        // mock role lookup and mapping required by register()
+        var roleEntity = new Role(null, "ROLE_USER");
+        Mockito.when(roleRepositoryPort.findByName("ROLE_USER")).thenReturn(Optional.of(roleEntity));
+        Mockito.when(roleMapper.entityToDto(roleEntity)).thenReturn(new RoleDto(1L, "ROLE_USER"));
         Mockito.when(passwordEncoder.encode("pwd")).thenReturn("enc");
         Mockito.when(mapper.dtoToEntity(Mockito.any(UserDto.class))).thenReturn(entity);
-        Mockito.when(repositoryPort.saveUser(entity)).thenReturn(Optional.empty());
+        Mockito.when(userRepositoryPort.saveUser(entity)).thenReturn(Optional.empty());
 
         Assertions.assertThatThrownBy(() -> authService.register(dto))
                 .isExactlyInstanceOf(UserNotCreatedException.class)
@@ -187,6 +208,51 @@ class AuthServiceImplTest {
         Optional<AuthResponseDto> result = authService.login(dto);
 
         Assertions.assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should persist user roles to users_roles when registering")
+    void shouldPersistUserRolesWhenRegistering() {
+        var dto = new UserDto();
+        dto.setUsername("roleuser");
+        dto.setPassword("pwd");
+        dto.setRole("ROLE_DEV");
+
+        // Prepare entity returned by mapper with roles populated
+        var entity = new User();
+        entity.setUsername("roleuser");
+        entity.setPassword("encoded");
+        entity.setRole("ROLE_DEV");
+        entity.setRoles(java.util.List.of(new Role(null, "ROLE_DEV")));
+
+        var saved = new User();
+        saved.setId(10L);
+        saved.setUsername("roleuser");
+        saved.setRoles(entity.getRoles());
+
+        Mockito.when(userRepositoryPort.findByUsername("roleuser")).thenReturn(Optional.empty());
+        // mock role lookup and mapping required by register()
+        var roleEntity = new Role(null, "ROLE_DEV");
+        Mockito.when(roleRepositoryPort.findByName("ROLE_DEV")).thenReturn(Optional.of(roleEntity));
+        Mockito.when(roleMapper.entityToDto(roleEntity)).thenReturn(new RoleDto(2L, "ROLE_DEV"));
+        Mockito.when(passwordEncoder.encode("pwd")).thenReturn("encoded");
+        Mockito.when(mapper.dtoToEntity(Mockito.any(UserDto.class))).thenReturn(entity);
+        Mockito.when(userRepositoryPort.saveUser(Mockito.any(User.class))).thenReturn(Optional.of(saved));
+        var expectedDto = new UserDto();
+        expectedDto.setUsername("roleuser");
+        Mockito.when(mapper.entityToDto(saved)).thenReturn(expectedDto);
+
+        Optional<UserDto> result = authService.register(dto);
+
+        Assertions.assertThat(result).isPresent();
+
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userRepositoryPort).saveUser(captor.capture());
+        User captured = captor.getValue();
+
+        Assertions.assertThat(captured.getRoles()).isNotNull();
+        Assertions.assertThat(captured.getRoles()).hasSize(1);
+        Assertions.assertThat(captured.getRoles()).anyMatch(r -> r.getName().equals("ROLE_DEV"));
     }
 }
 

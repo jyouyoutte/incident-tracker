@@ -1,4 +1,4 @@
-package com.incident.tracker.domain.port;
+package com.incident.tracker.domain.port.auth;
 
 import com.incident.tracker.domain.model.User;
 

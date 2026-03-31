@@ -1,7 +1,7 @@
 package com.incident.tracker.infrastructure.security.service;
 
 import com.incident.tracker.domain.model.User;
-import com.incident.tracker.domain.port.UserRepositoryPort;
+import com.incident.tracker.domain.port.auth.UserRepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Optional;
 
 /**

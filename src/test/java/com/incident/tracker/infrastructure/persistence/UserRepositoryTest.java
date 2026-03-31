@@ -1,8 +1,8 @@
 package com.incident.tracker.infrastructure.persistence;
 
 import com.incident.tracker.domain.model.User;
+import com.incident.tracker.infrastructure.persistence.auth.UserRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

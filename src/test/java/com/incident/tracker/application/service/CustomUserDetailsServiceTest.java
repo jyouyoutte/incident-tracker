@@ -2,7 +2,7 @@ package com.incident.tracker.application.service;
 
 import com.incident.tracker.domain.model.Role;
 import com.incident.tracker.domain.model.User;
-import com.incident.tracker.domain.port.UserRepositoryPort;
+import com.incident.tracker.domain.port.auth.UserRepositoryPort;
 import com.incident.tracker.infrastructure.security.service.CustomUserDetailsService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
