@@ -1,4 +1,4 @@
-package com.incident.tracker.domain.exception;
+package com.incident.tracker.incident.domain.exception;
 
 public class IncidentNotFoundException extends RuntimeException {
     public IncidentNotFoundException(Long id) {

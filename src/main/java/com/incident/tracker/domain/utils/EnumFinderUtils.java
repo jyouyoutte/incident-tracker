@@ -1,6 +1,6 @@
 package com.incident.tracker.domain.utils;
 
-import com.incident.tracker.domain.model.LabelledEnum;
+import com.incident.tracker.incident.infrastructure.persistence.entity.LabelledEnum;
 
 import java.util.Arrays;
 

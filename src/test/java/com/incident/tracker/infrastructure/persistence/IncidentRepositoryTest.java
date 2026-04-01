@@ -1,7 +1,8 @@
 package com.incident.tracker.infrastructure.persistence;
 
-import com.incident.tracker.domain.model.Incident;
-import com.incident.tracker.domain.model.IncidentStatus;
+import com.incident.tracker.incident.infrastructure.persistence.entity.Incident;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatus;
+import com.incident.tracker.incident.infrastructure.persistence.repository.IncidentRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

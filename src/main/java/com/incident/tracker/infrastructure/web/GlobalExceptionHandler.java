@@ -1,8 +1,8 @@
 package com.incident.tracker.infrastructure.web;
 
 import com.incident.tracker.application.dto.error.ErrorResponseDto;
-import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
-import com.incident.tracker.domain.exception.IncidentNotFoundException;
+import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
+import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.infrastructure.security.exception.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

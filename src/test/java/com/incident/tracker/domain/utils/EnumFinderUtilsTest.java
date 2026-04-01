@@ -1,8 +1,7 @@
 package com.incident.tracker.domain.utils;
 
-import com.incident.tracker.domain.utils.EnumFinderUtils;
-import com.incident.tracker.domain.model.IncidentStatus;
-import com.incident.tracker.domain.model.Priority;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatus;
+import com.incident.tracker.incident.infrastructure.persistence.entity.Priority;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

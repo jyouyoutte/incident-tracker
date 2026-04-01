@@ -1,12 +1,13 @@
 package com.incident.tracker.infrastructure.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.incident.tracker.application.dto.incident.IncidentPatchRequestDto;
-import com.incident.tracker.application.dto.incident.IncidentRequestDto;
-import com.incident.tracker.application.dto.incident.IncidentResponseDto;
-import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
-import com.incident.tracker.domain.exception.IncidentNotFoundException;
-import com.incident.tracker.application.service.IncidentService;
+import com.incident.tracker.incident.application.dto.IncidentPatchRequestDto;
+import com.incident.tracker.incident.application.dto.IncidentRequestDto;
+import com.incident.tracker.incident.application.dto.IncidentResponseDto;
+import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
+import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
+import com.incident.tracker.incident.application.IncidentService;
+import com.incident.tracker.incident.infrastructure.web.controller.IncidentController;
 import com.incident.tracker.infrastructure.security.provider.JwtTokenProvider;
 import com.incident.tracker.infrastructure.security.service.CustomUserDetailsService;
 import org.junit.jupiter.api.DisplayName;

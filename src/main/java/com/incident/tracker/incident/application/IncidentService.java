@@ -1,14 +1,14 @@
-package com.incident.tracker.application.service;
+package com.incident.tracker.incident.application;
 
-import com.incident.tracker.application.dto.incident.IncidentPatchRequestDto;
-import com.incident.tracker.application.dto.incident.IncidentRequestDto;
-import com.incident.tracker.application.dto.incident.IncidentResponseDto;
-import com.incident.tracker.domain.exception.IncidentAlreadyClosedException;
-import com.incident.tracker.domain.exception.IncidentNotFoundException;
+import com.incident.tracker.incident.application.dto.IncidentPatchRequestDto;
+import com.incident.tracker.incident.application.dto.IncidentRequestDto;
+import com.incident.tracker.incident.application.dto.IncidentResponseDto;
+import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
+import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.domain.port.IncidentRepositoryPort;
 import com.incident.tracker.mapper.IncidentMapper;
-import com.incident.tracker.domain.model.Incident;
-import com.incident.tracker.domain.model.IncidentStatus;
+import com.incident.tracker.incident.infrastructure.persistence.entity.Incident;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

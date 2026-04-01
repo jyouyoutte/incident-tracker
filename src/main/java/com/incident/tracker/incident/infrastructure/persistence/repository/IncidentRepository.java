@@ -1,15 +1,11 @@
-package com.incident.tracker.domain.port;
+package com.incident.tracker.incident.infrastructure.persistence.repository;
 
 import com.incident.tracker.incident.infrastructure.persistence.entity.Incident;
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface IncidentRepositoryPort {
-    Incident save(Incident incident);
-    Optional<Incident> findById(Long id);
-    List<Incident> findAll();
+public interface IncidentRepository extends JpaRepository<Incident, Long> {
     List<Incident> findByStatus(IncidentStatus status);
-    void deleteAll();
 }

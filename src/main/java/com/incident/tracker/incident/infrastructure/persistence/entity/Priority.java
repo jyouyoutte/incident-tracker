@@ -1,4 +1,4 @@
-package com.incident.tracker.domain.model;
+package com.incident.tracker.incident.infrastructure.persistence.entity;
 
 /**
  * Possible lifecycle states for an incident

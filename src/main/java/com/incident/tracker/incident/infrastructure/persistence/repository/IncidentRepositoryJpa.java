@@ -1,7 +1,7 @@
-package com.incident.tracker.infrastructure.persistence;
+package com.incident.tracker.incident.infrastructure.persistence.repository;
 
-import com.incident.tracker.domain.model.Incident;
-import com.incident.tracker.domain.model.IncidentStatus;
+import com.incident.tracker.incident.infrastructure.persistence.entity.Incident;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatus;
 import com.incident.tracker.domain.port.IncidentRepositoryPort;
 import org.springframework.stereotype.Repository;
 
