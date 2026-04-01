@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -45,7 +46,7 @@ public class AuthController {
         }else {
             // Return structured error response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new com.incident.tracker.application.dto.error.ErrorResponseDto("SERVER_ERROR", "Failed to register user"));
+                    .body(new com.incident.tracker.application.dto.error.ErrorResponseDto("SERVER_ERROR", "Failed to register user", LocalDateTime.now()));
         }
     }
 
