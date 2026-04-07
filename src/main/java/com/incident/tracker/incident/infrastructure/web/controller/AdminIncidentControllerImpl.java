@@ -1,23 +1,18 @@
-package com.incident.tracker.auth.infrastructure.web.controller;
+package com.incident.tracker.incident.infrastructure.web.controller;
 
 import com.incident.tracker.incident.application.service.DatabaseResetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-//@Profile("dev")
-@RestController
-@RequestMapping("/api/admin")
-public class AdminController {
-    // ...existing code...
-    // Remplacement: use explicit class reference for logger
-    private final Logger logger = LoggerFactory.getLogger(AdminController.class);
+@Component
+public class AdminIncidentControllerImpl implements AdminIncidentController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final DatabaseResetService databaseResetService;
 
-    public AdminController(DatabaseResetService databaseResetService) {
+    public AdminIncidentControllerImpl(DatabaseResetService databaseResetService) {
         this.databaseResetService = databaseResetService;
     }
 

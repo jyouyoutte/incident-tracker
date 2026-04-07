@@ -1,6 +1,6 @@
 package com.incident.tracker.infrastructure.web;
 
-import com.incident.tracker.auth.infrastructure.web.controller.AdminController;
+import com.incident.tracker.incident.infrastructure.web.controller.AdminIncidentController;
 import com.incident.tracker.incident.application.service.DatabaseResetService;
 import com.incident.tracker.auth.infrastructure.security.provider.JwtTokenProvider;
 import com.incident.tracker.auth.infrastructure.security.service.CustomUserDetailsService;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(AdminController.class)
+@WebMvcTest(AdminIncidentController.class)
 class AdminControllerTest {
 
     @Autowired
