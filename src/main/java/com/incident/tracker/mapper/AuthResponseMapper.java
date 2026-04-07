@@ -1,7 +1,7 @@
 package com.incident.tracker.mapper;
 
-import com.incident.tracker.application.dto.auth.AuthResponseDto;
-import com.incident.tracker.infrastructure.web.vo.auth.AuthResponseVo;
+import com.incident.tracker.auth.application.dto.AuthResponseDto;
+import com.incident.tracker.auth.infrastructure.web.vo.AuthResponseVo;
 import org.springframework.stereotype.Component;
 
 @Component

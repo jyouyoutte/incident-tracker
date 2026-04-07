@@ -1,33 +1,33 @@
 package com.incident.tracker.mapper;
 
-import com.incident.tracker.incident.application.dto.IncidentPatchRequestDto;
-import com.incident.tracker.incident.application.dto.IncidentRequestDto;
-import com.incident.tracker.incident.application.dto.IncidentResponseDto;
-import com.incident.tracker.incident.infrastructure.persistence.entity.Incident;
-import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatus;
-import com.incident.tracker.incident.infrastructure.persistence.entity.Priority;
-import com.incident.tracker.domain.utils.EnumFinderUtils;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVO;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentEntity;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;
+import com.incident.tracker.incident.infrastructure.persistence.entity.PriorityEntity;
+import com.incident.tracker.shared.domain.EnumFinderUtils;
 import org.springframework.stereotype.Component;
 
 @Component
 public class IncidentMapper {
 
-    public Incident toEntity(IncidentRequestDto dto) {
-        return Incident.builder()
+    public IncidentEntity toEntity(IncidentRequestVo dto) {
+        return IncidentEntity.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
-                .priority(EnumFinderUtils.parseByValue(Priority.class, dto.getPriority()))
-                .status(EnumFinderUtils.parseByName(IncidentStatus.class, dto.getStatus()))
+                .priorityEntity(EnumFinderUtils.parseByValue(PriorityEntity.class, dto.getPriority()))
+                .incidentStatusEntity(EnumFinderUtils.parseByName(IncidentStatusEntity.class, dto.getStatus()))
                 .build();
     }
 
-    public IncidentResponseDto toResponse(Incident incident) {
-        return new IncidentResponseDto(
+    public IncidentResponseVO toResponse(IncidentEntity incident) {
+        return new IncidentResponseVO(
                 incident.getId(),
                 incident.getTitle(),
                 incident.getDescription(),
-                incident.getPriority().getLabel(),
-                incident.getStatus().name(),
+                incident.getPriorityEntity()!=null ? incident.getPriorityEntity().getLabel() : null,
+                incident.getIncidentStatusEntity()!=null ? incident.getIncidentStatusEntity().name() : null,
                 incident.getCreatedAt(),
                 incident.getUpdatedAt()
         );
@@ -36,7 +36,7 @@ public class IncidentMapper {
     /**
      * Updates entity fields from request DTO (only non-null values are applied)
      */
-    public void updateEntityFromDto(IncidentPatchRequestDto dto, Incident entity) {
+    public void updateEntityFromDto(IncidentPatchRequestVo dto, IncidentEntity entity) {
         if (dto == null || entity == null) {
             return;
         }
@@ -49,11 +49,11 @@ public class IncidentMapper {
         }
 
         if (dto.getPriority() != null) {
-            entity.setPriority(EnumFinderUtils.parseByValue(Priority.class, dto.getPriority()));
+            entity.setPriorityEntity(EnumFinderUtils.parseByValue(PriorityEntity.class, dto.getPriority()));
         }
 
         if(dto.getStatus() !=null){
-            entity.setStatus(EnumFinderUtils.parseByName(IncidentStatus.class, dto.getStatus()));
+            entity.setIncidentStatusEntity(EnumFinderUtils.parseByName(IncidentStatusEntity.class, dto.getStatus()));
         }
 
         if (dto.getAssignedDeveloper() != null) {

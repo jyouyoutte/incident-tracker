@@ -1,8 +1,8 @@
 package com.incident.tracker.incident.infrastructure.persistence.repository;
 
-import com.incident.tracker.incident.infrastructure.persistence.entity.Incident;
-import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatus;
-import com.incident.tracker.domain.port.IncidentRepositoryPort;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentEntity;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;
+import com.incident.tracker.incident.domain.port.IncidentRepositoryPort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,23 +17,23 @@ public class IncidentRepositoryJpa implements IncidentRepositoryPort {
     }
 
     @Override
-    public Incident save(Incident incident) {
+    public IncidentEntity save(IncidentEntity incident) {
         return incidentRepository.save(incident);
     }
 
     @Override
-    public Optional<Incident> findById(Long id) {
+    public Optional<IncidentEntity> findById(Long id) {
         return incidentRepository.findById(id);
     }
 
     @Override
-    public List<Incident> findAll() {
+    public List<IncidentEntity> findAll() {
         return incidentRepository.findAll();
     }
 
     @Override
-    public List<Incident> findByStatus(IncidentStatus status) {
-        return incidentRepository.findByStatus(status);
+    public List<IncidentEntity> findByIncidentStatusEntity(IncidentStatusEntity status) {
+        return incidentRepository.findByIncidentStatusEntity(status);
     }
 
     @Override

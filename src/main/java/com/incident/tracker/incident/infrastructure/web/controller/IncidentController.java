@@ -1,9 +1,9 @@
 package com.incident.tracker.incident.infrastructure.web.controller;
 
-import com.incident.tracker.incident.application.dto.IncidentPatchRequestDto;
-import com.incident.tracker.incident.application.dto.IncidentRequestDto;
-import com.incident.tracker.incident.application.dto.IncidentResponseDto;
-import com.incident.tracker.incident.application.IncidentService;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVO;
+import com.incident.tracker.incident.application.service.IncidentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,19 +33,19 @@ public class IncidentController {
             @ApiResponse(responseCode = "200", description = "Incident created successfully"),
             @ApiResponse(responseCode = "400", description = "Validation error on request payload")
     })
-    public IncidentResponseDto create(
+    public IncidentResponseVO create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                 description = "Incident payload. Allowed values: priority = [LOW, MODERATE, HIGH]; status = [OPEN, IN_PROGRESS, CLOSED]",
                 required = true,
                 content = @io.swagger.v3.oas.annotations.media.Content(
                     mediaType = "application/json",
                     schema = @io.swagger.v3.oas.annotations.media.Schema(
-                        implementation = IncidentRequestDto.class,
+                        implementation = IncidentRequestVo.class,
                         example = "{ \"title\": \"1ere anomalie\", \"description\": \"test swagger\", \"priority\": \"MODERATE\", \"status\": \"OPEN\" }"
                     )
                 )
             )
-            @Valid @RequestBody IncidentRequestDto request) {
+            @Valid @RequestBody IncidentRequestVo request) {
         logger.info("HTTP POST /api/incidents - Creating new incident with title={}", request.getTitle());
         return service.createIncident(request);
     }
@@ -55,7 +55,7 @@ public class IncidentController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Incidents fetched successfully")
     })
-    public List<IncidentResponseDto> getAll() {
+    public List<IncidentResponseVO> getAll() {
         logger.info("HTTP GET /api/incidents - Fetching all incidents");
         return service.getAllIncidents();
     }
@@ -66,7 +66,7 @@ public class IncidentController {
             @ApiResponse(responseCode = "200", description = "Incident found"),
             @ApiResponse(responseCode = "404", description = "Incident not found")
     })
-    public IncidentResponseDto getById(
+    public IncidentResponseVO getById(
             @Parameter(description = "Incident ID", example = "1")
             @PathVariable Long id) {
         logger.info("HTTP GET /api/incidents/{}", id);
@@ -79,7 +79,7 @@ public class IncidentController {
             @ApiResponse(responseCode = "200", description = "Incident closed successfully"),
             @ApiResponse(responseCode = "404", description = "Incident not found")
     })
-    public IncidentResponseDto close(
+    public IncidentResponseVO close(
             @Parameter(description = "Incident ID", example = "1")
             @PathVariable Long id) {
         logger.info("HTTP POST /api/incidents/{}/close", id);
@@ -93,10 +93,10 @@ public class IncidentController {
             @ApiResponse(responseCode = "400", description = "Validation error on request payload"),
             @ApiResponse(responseCode = "404", description = "Incident not found")
     })
-    public IncidentResponseDto update(
+    public IncidentResponseVO update(
             @Parameter(description = "Incident ID", example = "1")
             @PathVariable Long id,
-            @Valid @RequestBody IncidentPatchRequestDto request) {
+            @Valid @RequestBody IncidentPatchRequestVo request) {
         logger.info("HTTP PATCH /api/incidents/{} - Updating incident with title={}", id, request.getTitle());
         return service.updateIncident(id, request);
     }

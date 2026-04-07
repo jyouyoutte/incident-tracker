@@ -1,8 +1,9 @@
 package com.incident.tracker.infrastructure.web;
 
-import com.incident.tracker.application.service.DatabaseResetService;
-import com.incident.tracker.infrastructure.security.provider.JwtTokenProvider;
-import com.incident.tracker.infrastructure.security.service.CustomUserDetailsService;
+import com.incident.tracker.auth.infrastructure.web.controller.AdminController;
+import com.incident.tracker.incident.application.service.DatabaseResetService;
+import com.incident.tracker.auth.infrastructure.security.provider.JwtTokenProvider;
+import com.incident.tracker.auth.infrastructure.security.service.CustomUserDetailsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

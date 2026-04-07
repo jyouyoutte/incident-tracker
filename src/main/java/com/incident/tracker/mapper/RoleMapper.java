@@ -1,7 +1,7 @@
 package com.incident.tracker.mapper;
 
-import com.incident.tracker.application.dto.auth.RoleDto;
-import com.incident.tracker.domain.model.Role;
+import com.incident.tracker.auth.application.dto.RoleDto;
+import com.incident.tracker.auth.infrastructure.persistence.entity.Role;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,15 +1,15 @@
 package com.incident.tracker.application.service.impl;
 
-import com.incident.tracker.application.dto.auth.AuthResponseDto;
-import com.incident.tracker.application.dto.auth.UserDto;
-import com.incident.tracker.domain.model.Role;
-import com.incident.tracker.domain.model.User;
-import com.incident.tracker.domain.port.auth.RoleRepositoryPort;
-import com.incident.tracker.domain.port.auth.UserRepositoryPort;
-import com.incident.tracker.infrastructure.security.exception.UserAlreadyExistsException;
-import com.incident.tracker.infrastructure.security.exception.UserNotCreatedException;
-import com.incident.tracker.infrastructure.security.provider.JwtTokenProvider;
-import com.incident.tracker.mapper.RoleMapper;
+import com.incident.tracker.auth.application.dto.AuthResponseDto;
+import com.incident.tracker.auth.application.dto.UserDto;
+import com.incident.tracker.auth.application.service.AuthServiceImpl;
+import com.incident.tracker.auth.infrastructure.persistence.entity.Role;
+import com.incident.tracker.auth.infrastructure.persistence.entity.User;
+import com.incident.tracker.auth.domain.port.RoleRepositoryPort;
+import com.incident.tracker.auth.domain.port.UserRepositoryPort;
+import com.incident.tracker.auth.infrastructure.security.exception.UserAlreadyExistsException;
+import com.incident.tracker.auth.infrastructure.security.exception.UserNotCreatedException;
+import com.incident.tracker.auth.infrastructure.security.provider.JwtTokenProvider;
 import com.incident.tracker.mapper.UserMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

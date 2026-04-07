@@ -1,9 +1,9 @@
 package com.incident.tracker.mapper;
 
-import com.incident.tracker.application.dto.auth.UserDto;
-import com.incident.tracker.domain.model.Role;
-import com.incident.tracker.domain.model.User;
-import com.incident.tracker.infrastructure.web.vo.auth.UserVo;
+import com.incident.tracker.auth.application.dto.UserDto;
+import com.incident.tracker.auth.infrastructure.persistence.entity.Role;
+import com.incident.tracker.auth.infrastructure.persistence.entity.User;
+import com.incident.tracker.auth.infrastructure.web.vo.UserVo;
 import org.springframework.stereotype.Component;
 
 /** * UserMapper is a component responsible for mapping between UserDto, User entity, and UserVo.

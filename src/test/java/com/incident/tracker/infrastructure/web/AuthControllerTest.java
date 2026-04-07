@@ -1,13 +1,14 @@
 package com.incident.tracker.infrastructure.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.incident.tracker.application.dto.auth.AuthResponseDto;
-import com.incident.tracker.application.dto.auth.UserDto;
-import com.incident.tracker.application.service.AuthService;
-import com.incident.tracker.infrastructure.security.provider.JwtTokenProvider;
-import com.incident.tracker.infrastructure.security.service.CustomUserDetailsService;
-import com.incident.tracker.infrastructure.web.vo.auth.AuthResponseVo;
-import com.incident.tracker.infrastructure.web.vo.auth.UserVo;
+import com.incident.tracker.auth.application.dto.AuthResponseDto;
+import com.incident.tracker.auth.application.dto.UserDto;
+import com.incident.tracker.auth.application.service.AuthService;
+import com.incident.tracker.auth.infrastructure.security.provider.JwtTokenProvider;
+import com.incident.tracker.auth.infrastructure.security.service.CustomUserDetailsService;
+import com.incident.tracker.auth.infrastructure.web.controller.AuthController;
+import com.incident.tracker.auth.infrastructure.web.vo.AuthResponseVo;
+import com.incident.tracker.auth.infrastructure.web.vo.UserVo;
 import com.incident.tracker.mapper.AuthResponseMapper;
 import com.incident.tracker.mapper.UserMapper;
 import org.assertj.core.api.Assertions;

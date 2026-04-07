@@ -1,6 +1,7 @@
 package com.incident.tracker.application.service;
 
-import com.incident.tracker.domain.port.IncidentRepositoryPort;
+import com.incident.tracker.incident.domain.port.IncidentRepositoryPort;
+import com.incident.tracker.incident.application.service.DatabaseResetService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

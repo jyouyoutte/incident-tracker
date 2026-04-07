@@ -176,10 +176,10 @@
 				</executions>
 				<configuration>
 					<excludes>
-						<exclude>com/incident/tracker/domain/**</exclude>
-						<exclude>com/incident/tracker/application/infrastructure/security/**</exclude>
-						<exclude>com/incident/tracker/mapper/**</exclude>
-						<exclude>com/incident/tracker/model/**</exclude>
+						<exclude>com/incident/tracker/**/domain/**</exclude>
+						<exclude>com/incident/tracker/auth/infrastructure/security/**</exclude>
+						<exclude>com/incident/tracker/**/mapper/**</exclude>
+						<exclude>com/incident/tracker/**/model/**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

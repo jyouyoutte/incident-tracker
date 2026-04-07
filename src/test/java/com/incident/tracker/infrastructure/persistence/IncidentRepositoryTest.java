@@ -1,7 +1,7 @@
 package com.incident.tracker.infrastructure.persistence;
 
-import com.incident.tracker.incident.infrastructure.persistence.entity.Incident;
-import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatus;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentEntity;
+import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;
 import com.incident.tracker.incident.infrastructure.persistence.repository.IncidentRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,37 +27,37 @@ public class IncidentRepositoryTest {
     @Test
     void shouldFindByStatus(){
         // Given
-        Incident openIncident = new Incident();
+        IncidentEntity openIncident = new IncidentEntity();
         openIncident.setTitle("Connection Failed");
-        openIncident.setStatus(IncidentStatus.OPEN);
+        openIncident.setIncidentStatusEntity(IncidentStatusEntity.OPEN);
 
         incidentRepository.saveAll(List.of(openIncident));
 
         //When
-        List<Incident> resultsByStatus = incidentRepository.findByStatus(IncidentStatus.OPEN);
+        List<IncidentEntity> resultsByStatus = incidentRepository.findByIncidentStatusEntity(IncidentStatusEntity.OPEN);
 
         //Then
         Assertions.assertThat(resultsByStatus)
                 .hasSize(1)
-                .extracting(Incident::getStatus)
-                .containsExactly(IncidentStatus.OPEN);
+                .extracting(IncidentEntity::getIncidentStatusEntity)
+                .containsExactly(IncidentStatusEntity.OPEN);
     }
 
     @Test
     void shouldFindAll(){
         // Given
-        Incident openIncident1 = new Incident();
+        IncidentEntity openIncident1 = new IncidentEntity();
         openIncident1.setTitle("query test1");
-        openIncident1.setStatus(IncidentStatus.OPEN);
+        openIncident1.setIncidentStatusEntity(IncidentStatusEntity.OPEN);
 
-        Incident openIncident2 = new Incident();
+        IncidentEntity openIncident2 = new IncidentEntity();
         openIncident2.setTitle("query test2");
-        openIncident2.setStatus(IncidentStatus.OPEN);
+        openIncident2.setIncidentStatusEntity(IncidentStatusEntity.OPEN);
 
         incidentRepository.saveAll(List.of(openIncident1, openIncident2));
 
         //When
-        List<Incident> results= incidentRepository.findAll();
+        List<IncidentEntity> results= incidentRepository.findAll();
 
         //Then
         Assertions.assertThat(results)
