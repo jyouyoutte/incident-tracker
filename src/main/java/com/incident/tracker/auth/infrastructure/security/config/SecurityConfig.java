@@ -54,6 +54,10 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health/**").permitAll()
                         // Admin endpoints require ADMIN role
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Allow unauthenticated access to Swagger/OpenAPI docs
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
                 )
