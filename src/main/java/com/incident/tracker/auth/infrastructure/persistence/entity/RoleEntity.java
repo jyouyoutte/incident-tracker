@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class RoleEntity {
     @Id
     @GeneratedValue
     private Long id;

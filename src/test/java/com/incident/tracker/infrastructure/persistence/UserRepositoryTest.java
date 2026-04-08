@@ -1,7 +1,7 @@
 package com.incident.tracker.infrastructure.persistence;
 
-import com.incident.tracker.auth.infrastructure.persistence.entity.User;
-import com.incident.tracker.auth.infrastructure.persistence.repository.UserRepository;
+import com.incident.tracker.auth.infrastructure.persistence.entity.UserEntity;
+import com.incident.tracker.auth.infrastructure.persistence.repository.UserJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,19 +15,19 @@ import java.util.Optional;
 class UserRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserJpaRepository userRepository;
 
 
 
     @Test
     void shouldFindByUsernameWhenUserExists() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setName("Bruno User");
         user.setUsername("bruno");
         user.setPassword("bruno");
 
         userRepository.saveAndFlush(user);
-        Optional<User> found = userRepository.findByUsername("bruno");
+        Optional<UserEntity> found = userRepository.findByUsername("bruno");
 
         Assertions.assertThat(found).isPresent();
         Assertions.assertThat(found.get().getUsername()).isEqualTo("bruno");
@@ -36,7 +36,7 @@ class UserRepositoryTest {
 
     @Test
     void shouldReturnEmptyWhenUsernameNotFound() {
-        Optional<User> found = userRepository.findByUsername("nope");
+        Optional<UserEntity> found = userRepository.findByUsername("nope");
 
         Assertions.assertThat(found).isNotPresent();
     }

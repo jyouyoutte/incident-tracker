@@ -1,8 +1,8 @@
 package com.incident.tracker.application.service;
 
-import com.incident.tracker.auth.infrastructure.persistence.entity.Role;
-import com.incident.tracker.auth.infrastructure.persistence.entity.User;
-import com.incident.tracker.auth.domain.port.UserRepositoryPort;
+import com.incident.tracker.auth.infrastructure.persistence.entity.RoleEntity;
+import com.incident.tracker.auth.infrastructure.persistence.entity.UserEntity;
+import com.incident.tracker.auth.infrastructure.persistence.repository.UserRepositoryPort;
 import com.incident.tracker.auth.infrastructure.security.service.CustomUserDetailsService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -35,11 +35,11 @@ class CustomUserDetailsServiceTest {
         @Test
         @DisplayName("Should return UserDetails when the user exists")
         void shouldReturnUserDetailsWhenUserExists() {
-            var user = new User();
+            var user = new UserEntity();
             user.setId(1L);
             user.setUsername("bruno");
             user.setPassword("secret");
-            user.setRoles(List.of(new Role(1L, "ROLE_USER"))) ;
+            user.setRoles(List.of(new RoleEntity(1L, "ROLE_USER"))) ;
 
             Mockito.when(userRepositoryPort.findByUsername("bruno")).thenReturn(Optional.of(user));
 

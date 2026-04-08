@@ -1,4 +1,4 @@
-package com.incident.tracker.mapper;
+package com.incident.tracker.auth.infrastructure.web.mapper;
 
 import com.incident.tracker.auth.application.dto.AuthResponseDto;
 import com.incident.tracker.auth.infrastructure.web.vo.AuthResponseVo;

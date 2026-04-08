@@ -3,14 +3,14 @@ package com.incident.tracker.application.service.impl;
 import com.incident.tracker.auth.application.dto.AuthResponseDto;
 import com.incident.tracker.auth.application.dto.UserDto;
 import com.incident.tracker.auth.application.service.AuthServiceImpl;
-import com.incident.tracker.auth.infrastructure.persistence.entity.Role;
-import com.incident.tracker.auth.infrastructure.persistence.entity.User;
-import com.incident.tracker.auth.domain.port.RoleRepositoryPort;
-import com.incident.tracker.auth.domain.port.UserRepositoryPort;
+import com.incident.tracker.auth.infrastructure.persistence.repository.RoleRepositoryPort;
+import com.incident.tracker.auth.infrastructure.persistence.repository.UserRepositoryPort;
+import com.incident.tracker.auth.infrastructure.persistence.entity.RoleEntity;
+import com.incident.tracker.auth.infrastructure.persistence.entity.UserEntity;
+import com.incident.tracker.auth.infrastructure.persistence.mapper.UserPersistenceMapper;
 import com.incident.tracker.auth.infrastructure.security.exception.UserAlreadyExistsException;
 import com.incident.tracker.auth.infrastructure.security.exception.UserNotCreatedException;
 import com.incident.tracker.auth.infrastructure.security.provider.JwtTokenProvider;
-import com.incident.tracker.mapper.UserMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class AuthServiceImplTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private UserMapper mapper;
+    private UserPersistenceMapper mapper;
 
     @Mock
     private RoleRepositoryPort roleRepositoryPort;
@@ -56,7 +56,7 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("Should return UserDto when user exists")
     void shouldReturnUserDtoWhenUserExists() {
-        var user = new User();
+        var user = new UserEntity();
         user.setId(1L);
         user.setUsername("bruno");
         var dto = new UserDto();
@@ -89,16 +89,16 @@ class AuthServiceImplTest {
         dto.setPassword("raw");
         dto.setRoles(List.of("ROLE_USER"));
 
-        var entity = new User();
+        var entity = new UserEntity();
         entity.setUsername("newuser");
 
-        var saved = new User();
+        var saved = new UserEntity();
         saved.setId(2L);
         saved.setUsername("newuser");
 
         Mockito.when(userRepositoryPort.findByUsername("newuser")).thenReturn(Optional.empty());
         // mock role lookup and mapping required by register()
-        var roleEntity = new Role(null, "ROLE_USER");
+        var roleEntity = new RoleEntity(null, "ROLE_USER");
         Mockito.when(roleRepositoryPort.findByName("ROLE_USER")).thenReturn(Optional.of(roleEntity));
         Mockito.when(passwordEncoder.encode("raw")).thenReturn("encoded");
         Mockito.when(mapper.dtoToEntity(Mockito.any(UserDto.class))).thenReturn(entity);
@@ -119,7 +119,7 @@ class AuthServiceImplTest {
         var dto = new UserDto();
         dto.setUsername("exist");
 
-        var existingUser = new User();
+        var existingUser = new UserEntity();
         existingUser.setUsername("exist");
         Mockito.when(userRepositoryPort.findByUsername("exist")).thenReturn(Optional.of(existingUser));
         Mockito.when(mapper.entityToDto(existingUser)).thenReturn(dto);
@@ -137,12 +137,12 @@ class AuthServiceImplTest {
         dto.setPassword("pwd");
         dto.setRoles(List.of("ROLE_USER"));
 
-        var entity = new User();
+        var entity = new UserEntity();
         entity.setUsername("willfail");
 
         Mockito.when(userRepositoryPort.findByUsername("willfail")).thenReturn(Optional.empty());
         // mock role lookup and mapping required by register()
-        var roleEntity = new Role(null, "ROLE_USER");
+        var roleEntity = new RoleEntity(null, "ROLE_USER");
         Mockito.when(roleRepositoryPort.findByName("ROLE_USER")).thenReturn(Optional.of(roleEntity));
         Mockito.when(passwordEncoder.encode("pwd")).thenReturn("enc");
         Mockito.when(mapper.dtoToEntity(Mockito.any(UserDto.class))).thenReturn(entity);
@@ -214,23 +214,23 @@ class AuthServiceImplTest {
         dto.setRoles(List.of("ROLE_DEV"));
 
         // Prepare entity returned by mapper with roles populated
-        var entity = new User();
+        var entity = new UserEntity();
         entity.setUsername("roleuser");
         entity.setPassword("encoded");
-        entity.setRoles(List.of(new Role(null, "ROLE_DEV")));
+        entity.setRoles(List.of(new RoleEntity(null, "ROLE_DEV")));
 
-        var saved = new User();
+        var saved = new UserEntity();
         saved.setId(10L);
         saved.setUsername("roleuser");
         saved.setRoles(entity.getRoles());
 
         Mockito.when(userRepositoryPort.findByUsername("roleuser")).thenReturn(Optional.empty());
         // mock role lookup and mapping required by register()
-        var roleEntity = new Role(null, "ROLE_DEV");
+        var roleEntity = new RoleEntity(null, "ROLE_DEV");
         Mockito.when(roleRepositoryPort.findByName("ROLE_DEV")).thenReturn(Optional.of(roleEntity));
         Mockito.when(passwordEncoder.encode("pwd")).thenReturn("encoded");
         Mockito.when(mapper.dtoToEntity(Mockito.any(UserDto.class))).thenReturn(entity);
-        Mockito.when(userRepositoryPort.saveUser(Mockito.any(User.class))).thenReturn(Optional.of(saved));
+        Mockito.when(userRepositoryPort.saveUser(Mockito.any(UserEntity.class))).thenReturn(Optional.of(saved));
         var expectedDto = new UserDto();
         expectedDto.setUsername("roleuser");
         Mockito.when(mapper.entityToDto(saved)).thenReturn(expectedDto);
@@ -239,9 +239,9 @@ class AuthServiceImplTest {
 
         Assertions.assertThat(result).isPresent();
 
-        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
         Mockito.verify(userRepositoryPort).saveUser(captor.capture());
-        User captured = captor.getValue();
+        UserEntity captured = captor.getValue();
 
         Assertions.assertThat(captured.getRoles()).isNotNull();
         Assertions.assertThat(captured.getRoles()).hasSize(1);

@@ -1,7 +1,7 @@
 package com.incident.tracker.auth.infrastructure.security.service;
 
-import com.incident.tracker.auth.infrastructure.persistence.entity.User;
-import com.incident.tracker.auth.domain.port.UserRepositoryPort;
+import com.incident.tracker.auth.infrastructure.persistence.entity.UserEntity;
+import com.incident.tracker.auth.infrastructure.persistence.repository.UserRepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,7 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.info("Loading user by username: {}", username);
 
-        Optional<User> user = userRepositoryPort.findByUsername(username);
+        Optional<UserEntity> user = userRepositoryPort.findByUsername(username);
         if (user.isEmpty()) {
             logger.warn("User not found: {}", username);
             throw new UsernameNotFoundException("User not found with username: " + username);

@@ -2,15 +2,14 @@ package com.incident.tracker.auth.application.service;
 
 import com.incident.tracker.auth.application.dto.AuthResponseDto;
 import com.incident.tracker.auth.application.dto.UserDto;
-import com.incident.tracker.auth.infrastructure.persistence.entity.Role;
-import com.incident.tracker.auth.infrastructure.persistence.entity.User;
-import com.incident.tracker.auth.domain.port.RoleRepositoryPort;
-import com.incident.tracker.auth.domain.port.UserRepositoryPort;
+import com.incident.tracker.auth.infrastructure.persistence.repository.RoleRepositoryPort;
+import com.incident.tracker.auth.infrastructure.persistence.repository.UserRepositoryPort;
+import com.incident.tracker.auth.infrastructure.persistence.entity.RoleEntity;
+import com.incident.tracker.auth.infrastructure.persistence.entity.UserEntity;
+import com.incident.tracker.auth.infrastructure.persistence.mapper.UserPersistenceMapper;
 import com.incident.tracker.auth.infrastructure.security.exception.UserAlreadyExistsException;
 import com.incident.tracker.auth.infrastructure.security.exception.UserNotCreatedException;
 import com.incident.tracker.auth.infrastructure.security.provider.JwtTokenProvider;
-import com.incident.tracker.mapper.RoleMapper;
-import com.incident.tracker.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,31 +30,29 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    private final UserMapper userMapper;
-    private final RoleMapper roleMapper;
+    private final UserPersistenceMapper userPersistenceMapperMapper;
     private final RoleRepositoryPort roleRepositoryPort;
 
     public AuthServiceImpl(UserRepositoryPort repositoryPort,
                            PasswordEncoder passwordEncoder,
                            JwtTokenProvider jwtTokenProvider,
                            AuthenticationManager authenticationManager,
-                           UserMapper userMapper,
-                           RoleMapper roleMapper, RoleRepositoryPort roleRepositoryPort) {
+                           UserPersistenceMapper userPersistenceMapperMapper,
+                           RoleRepositoryPort roleRepositoryPort) {
         this.repositoryPort = repositoryPort;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManager = authenticationManager;
-        this.userMapper = userMapper;
-        this.roleMapper = roleMapper;
+        this.userPersistenceMapperMapper = userPersistenceMapperMapper;
         this.roleRepositoryPort = roleRepositoryPort;
     }
 
     @Override
     public Optional<UserDto> findByUsername(String username) {
-        Optional<User> user = repositoryPort.findByUsername(username);
+        Optional<UserEntity> user = repositoryPort.findByUsername(username);
         if(user.isPresent()){
             logger.info("User with username={}  found", username);
-            return Optional.of(userMapper.entityToDto(user.get()));
+            return Optional.of(userPersistenceMapperMapper.entityToDto(user.get()));
         }
         logger.info("User with username={} not found", username);
         return Optional.empty();
@@ -77,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Resolve role entities
-        List<Role> roleEntities = requestedRoles.stream()
+        List<RoleEntity> roleEntities = requestedRoles.stream()
                 .map(rn -> roleRepositoryPort.findByName(rn)
                         .orElseThrow(() -> new UserNotCreatedException("Role not found: " + rn)))
                 .toList();
@@ -86,17 +83,17 @@ public class AuthServiceImpl implements AuthService {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         // Map to entity and attach role entities so the join table users_roles is populated
-        User userEntity = userMapper.dtoToEntity(userDto);
+        UserEntity userEntity = userPersistenceMapperMapper.dtoToEntity(userDto);
         userEntity.setRoles(roleEntities);
 
-        Optional<User> newUser = repositoryPort.saveUser(userEntity);
-        userDto.setRoles(roleEntities.stream().map(Role::getName).toList());
+        Optional<UserEntity> newUser = repositoryPort.saveUser(userEntity);
+        userDto.setRoles(roleEntities.stream().map(RoleEntity::getName).toList());
         if(newUser.isEmpty()){
             logger.error("Failed to register user with username={}", userDto.getUsername());
             throw new UserNotCreatedException("User with username " + userDto.getUsername() + " not created: " + "An unexpected error occurred during user creation. Please try again later.");
         }
         logger.info("User with username={} registered successfully", userDto.getUsername());
-        return Optional.of(userMapper.entityToDto(newUser.get()));
+        return Optional.of(userPersistenceMapperMapper.entityToDto(newUser.get()));
     }
 
     @Override

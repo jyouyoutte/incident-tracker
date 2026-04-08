@@ -9,8 +9,8 @@ import com.incident.tracker.auth.infrastructure.security.service.CustomUserDetai
 import com.incident.tracker.auth.infrastructure.web.controller.AuthController;
 import com.incident.tracker.auth.infrastructure.web.vo.AuthResponseVo;
 import com.incident.tracker.auth.infrastructure.web.vo.UserVo;
-import com.incident.tracker.mapper.AuthResponseMapper;
-import com.incident.tracker.mapper.UserMapper;
+import com.incident.tracker.auth.infrastructure.web.mapper.AuthResponseMapper;
+import com.incident.tracker.auth.infrastructure.web.mapper.UserWebMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class AuthControllerTest {
     private AuthService authService;
 
     @MockitoBean
-    private UserMapper userMapper;
+    private UserWebMapper userMapper;
 
     @MockitoBean
     private AuthResponseMapper authResponseMapper;

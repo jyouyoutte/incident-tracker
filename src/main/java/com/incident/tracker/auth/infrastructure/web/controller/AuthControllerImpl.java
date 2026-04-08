@@ -5,8 +5,8 @@ import com.incident.tracker.auth.application.dto.UserDto;
 import com.incident.tracker.auth.application.error.ErrorResponseDto;
 import com.incident.tracker.auth.application.service.AuthService;
 import com.incident.tracker.auth.infrastructure.web.vo.UserVo;
-import com.incident.tracker.mapper.AuthResponseMapper;
-import com.incident.tracker.mapper.UserMapper;
+import com.incident.tracker.auth.infrastructure.web.mapper.AuthResponseMapper;
+import com.incident.tracker.auth.infrastructure.web.mapper.UserWebMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,10 +21,10 @@ import java.util.Optional;
 public class AuthControllerImpl implements AuthController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final AuthService authService;
-    private final UserMapper userMapper;
+    private final UserWebMapper userMapper;
     private final AuthResponseMapper authResponseMapper;
 
-    public AuthControllerImpl(AuthService authService, UserMapper userMapper, AuthResponseMapper authResponseMapper) {
+    public AuthControllerImpl(AuthService authService, UserWebMapper userMapper, AuthResponseMapper authResponseMapper) {
         this.authService = authService;
         this.userMapper = userMapper;
         this.authResponseMapper = authResponseMapper;
