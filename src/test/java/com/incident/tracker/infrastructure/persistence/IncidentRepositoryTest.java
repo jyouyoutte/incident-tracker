@@ -2,7 +2,7 @@ package com.incident.tracker.infrastructure.persistence;
 
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentEntity;
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;
-import com.incident.tracker.incident.infrastructure.persistence.repository.IncidentRepository;
+import com.incident.tracker.incident.infrastructure.persistence.repository.IncidentJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import java.util.List;
 public class IncidentRepositoryTest {
 
     @Autowired
-    private IncidentRepository incidentRepository;
+    private IncidentJpaRepository incidentRepository;
 
     @BeforeEach
     void setUp() {

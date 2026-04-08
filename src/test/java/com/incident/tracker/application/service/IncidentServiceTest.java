@@ -2,7 +2,7 @@ package com.incident.tracker.application.service;
 
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVO;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
 import com.incident.tracker.incident.application.service.IncidentService;
 import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
@@ -54,7 +54,7 @@ class IncidentServiceTest {
             request.setStatus("OPEN");
             var incident = new IncidentEntity();
             var savedIncident = new IncidentEntity();
-            var response = new IncidentResponseVO(1L, "Titre", "Desc", "HIGH", "OPEN", LocalDateTime.now(), null);
+            var response = new IncidentResponseVo(1L, "Titre", "Desc", "HIGH", "OPEN", LocalDateTime.now(), null);
 
             Mockito.when(mapper.toEntity(request)).thenReturn(incident);
             Mockito.when(incidentRepository.save(incident)).thenReturn(savedIncident);
@@ -78,7 +78,7 @@ class IncidentServiceTest {
         void shouldReturnListOfDtos() {
             // Given
             var incident = new IncidentEntity();
-            var response = new IncidentResponseVO(1L, "T", "D", "H", "OPEN", null, null);
+            var response = new IncidentResponseVo(1L, "T", "D", "H", "OPEN", null, null);
 
             Mockito.when(incidentRepository.findAll()).thenReturn(List.of(incident));
             Mockito.when(mapper.toResponse(incident)).thenReturn(response);
@@ -111,7 +111,7 @@ class IncidentServiceTest {
             // Given
             Long id = 1L;
             var incident = new IncidentEntity();
-            var response = new IncidentResponseVO(id, "T", "D", "H", "OPEN", null, null);
+            var response = new IncidentResponseVo(id, "T", "D", "H", "OPEN", null, null);
 
             Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
             Mockito.when(mapper.toResponse(incident)).thenReturn(response);
@@ -150,7 +150,7 @@ class IncidentServiceTest {
             var updatedIncident = new IncidentEntity();
             updatedIncident.setIncidentStatusEntity(IncidentStatusEntity.CLOSED);
 
-            var response = new IncidentResponseVO(id, "T", "D", "H", "CLOSED", null, null);
+            var response = new IncidentResponseVo(id, "T", "D", "H", "CLOSED", null, null);
 
             Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
             Mockito.when(incidentRepository.save(incident)).thenReturn(updatedIncident);
@@ -213,7 +213,7 @@ class IncidentServiceTest {
             var updatedIncident = new IncidentEntity();
             updatedIncident.setIncidentStatusEntity(IncidentStatusEntity.IN_PROGRESS);
 
-            var response = new IncidentResponseVO( id,"New Title", "New Desc", "MODERATE", "IN_PROGRESS", null, LocalDateTime.now());
+            var response = new IncidentResponseVo( id,"New Title", "New Desc", "MODERATE", "IN_PROGRESS", null, LocalDateTime.now());
 
             Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
             Mockito.when(incidentRepository.save(incident)).thenReturn(updatedIncident);

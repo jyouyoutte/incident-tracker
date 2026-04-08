@@ -2,7 +2,7 @@ package com.incident.tracker.incident.application.service;
 
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVO;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
 import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.incident.domain.port.IncidentRepositoryPort;
@@ -28,7 +28,7 @@ public class IncidentService {
     }
 
     @Transactional
-    public IncidentResponseVO createIncident(IncidentRequestVo request) {
+    public IncidentResponseVo createIncident(IncidentRequestVo request) {
         logger.info("Creating incident");
         // Map request to entity and log some non-sensitive details at debug level
         IncidentEntity incident = mapper.toEntity(request);
@@ -38,9 +38,9 @@ public class IncidentService {
     }
 
     @Transactional(readOnly = true)
-    public List<IncidentResponseVO> getAllIncidents() {
+    public List<IncidentResponseVo> getAllIncidents() {
         logger.info("Fetching all incidents");
-        List<IncidentResponseVO> results = incidentRepository.findAll()
+        List<IncidentResponseVo> results = incidentRepository.findAll()
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -49,7 +49,7 @@ public class IncidentService {
     }
 
     @Transactional(readOnly = true)
-    public IncidentResponseVO getIncidentById(Long id) {
+    public IncidentResponseVo getIncidentById(Long id) {
         logger.info("Fetching incident with id={}", id);
         IncidentEntity incident = incidentRepository.findById(id)
                 .orElseThrow(() -> new IncidentNotFoundException(id));
@@ -57,7 +57,7 @@ public class IncidentService {
     }
 
     @Transactional
-    public IncidentResponseVO closeIncident(Long id) {
+    public IncidentResponseVo closeIncident(Long id) {
         logger.info("Closing incident with id={}", id);
         IncidentEntity incident = incidentRepository.findById(id)
                 .orElseThrow(() -> new IncidentNotFoundException(id));
@@ -74,7 +74,7 @@ public class IncidentService {
     }
 
     @Transactional
-    public IncidentResponseVO updateIncident(Long id, IncidentPatchRequestVo request) {
+    public IncidentResponseVo updateIncident(Long id, IncidentPatchRequestVo request) {
         logger.info("Updating incident with id={}", id);
         IncidentEntity incident = incidentRepository.findById(id)
                 .orElseThrow(() -> new IncidentNotFoundException(id));

@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class IncidentRepositoryJpa implements IncidentRepositoryPort {
-    private final IncidentRepository incidentRepository;
+public class IncidentRepositoryAdapter implements IncidentRepositoryPort {
+    private final IncidentJpaRepository incidentRepository;
 
-    public IncidentRepositoryJpa(IncidentRepository incidentRepository) {
+    public IncidentRepositoryAdapter(IncidentJpaRepository incidentRepository) {
         this.incidentRepository = incidentRepository;
     }
 

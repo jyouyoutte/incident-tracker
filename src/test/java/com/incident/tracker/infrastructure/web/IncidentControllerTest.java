@@ -3,7 +3,7 @@ package com.incident.tracker.infrastructure.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVO;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
 import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.incident.application.service.IncidentService;
@@ -57,8 +57,8 @@ class IncidentControllerTest {
         request.setPriority("HIGH");
         request.setStatus("OPEN");
 
-        IncidentResponseVO response =
-                new IncidentResponseVO(1L, "Bug login", "Impossible login","HIGH","OPEN", LocalDateTime.now(), LocalDateTime.now());
+        IncidentResponseVo response =
+                new IncidentResponseVo(1L, "Bug login", "Impossible login","HIGH","OPEN", LocalDateTime.now(), LocalDateTime.now());
 
         when(service.createIncident(any())).thenReturn(response);
 
@@ -93,8 +93,8 @@ class IncidentControllerTest {
     @DisplayName("GET /api/incidents - find all incidents")
     void shouldGetAllIncidents() throws Exception {
         // Given
-        var response1 = new IncidentResponseVO(1L, "No connection", "D", "H", "OPEN", null, null);
-        var response2 = new IncidentResponseVO(2L, "No incidents displayed", "D", "H", "OPEN", null, null);
+        var response1 = new IncidentResponseVo(1L, "No connection", "D", "H", "OPEN", null, null);
+        var response2 = new IncidentResponseVo(2L, "No incidents displayed", "D", "H", "OPEN", null, null);
 
         when(service.getAllIncidents()).thenReturn(List.of(response1, response2));
 
@@ -109,7 +109,7 @@ class IncidentControllerTest {
     @DisplayName("GET /api/incidents/{id} - Success")
     void shouldGetIncidentById() throws Exception {
         Long id = 1L;
-        var response = new IncidentResponseVO(id, "Bug login", "Impossible login", "HIGH", "OPEN", null, LocalDateTime.now());
+        var response = new IncidentResponseVo(id, "Bug login", "Impossible login", "HIGH", "OPEN", null, LocalDateTime.now());
 
         when(service.getIncidentById(id)).thenReturn(response);
 
@@ -132,7 +132,7 @@ class IncidentControllerTest {
     @DisplayName("POST /api/incidents/{id}/close - Success in case of closed incident")
     void shouldCloseIncident() throws Exception {
         // Given
-        var response = new IncidentResponseVO(1L, "T", "D", "H", "CLOSED", null, null);
+        var response = new IncidentResponseVo(1L, "T", "D", "H", "CLOSED", null, null);
         when(service.closeIncident(1L)).thenReturn(response);
 
         // When & Then
@@ -163,7 +163,7 @@ class IncidentControllerTest {
     void shouldUpdateIncident() throws Exception {
         // Given
         Long id = 1L;
-        var response = new IncidentResponseVO(id, "Bug login", "Impossible login", "HIGH", "IN_PROGRESS", null, LocalDateTime.now());
+        var response = new IncidentResponseVo(id, "Bug login", "Impossible login", "HIGH", "IN_PROGRESS", null, LocalDateTime.now());
         IncidentPatchRequestVo request = new IncidentPatchRequestVo();
         request.setTitle("Bug login");
         request.setDescription("Impossible login");

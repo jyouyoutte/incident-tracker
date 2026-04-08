@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface IncidentRepository extends JpaRepository<IncidentEntity, Long> {
+public interface IncidentJpaRepository extends JpaRepository<IncidentEntity, Long> {
     List<IncidentEntity> findByIncidentStatusEntity(IncidentStatusEntity status);
 }

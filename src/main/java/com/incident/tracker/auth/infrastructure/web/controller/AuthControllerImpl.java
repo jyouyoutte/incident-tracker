@@ -4,15 +4,14 @@ import com.incident.tracker.auth.application.dto.AuthResponseDto;
 import com.incident.tracker.auth.application.dto.UserDto;
 import com.incident.tracker.auth.application.error.ErrorResponseDto;
 import com.incident.tracker.auth.application.service.AuthService;
-import com.incident.tracker.auth.infrastructure.web.vo.UserVo;
 import com.incident.tracker.auth.infrastructure.web.mapper.AuthResponseMapper;
 import com.incident.tracker.auth.infrastructure.web.mapper.UserWebMapper;
+import com.incident.tracker.auth.infrastructure.web.vo.UserVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -31,7 +30,7 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public ResponseEntity<?> register(@RequestBody UserVo userVo) {
+    public ResponseEntity<?> register(UserVo userVo) {
         logger.info("HTTP POST /api/auth/register - Registering new user with username={}", userVo.username());
         Optional<UserDto> newUser = authService.register(userMapper.voToDto(userVo));
         if(newUser.isPresent()){
@@ -46,7 +45,7 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public ResponseEntity<?> login(@RequestBody UserVo userVo) {
+    public ResponseEntity<?> login(UserVo userVo) {
         logger.info("HTTP GET /api/auth/login - login  user with username={}", userVo.username());
         Optional<AuthResponseDto> responseDto = authService.login(userMapper.voToDto(userVo));
         if(responseDto.isPresent()){

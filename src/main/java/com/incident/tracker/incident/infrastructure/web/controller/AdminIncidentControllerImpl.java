@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 @Component
 public class AdminIncidentControllerImpl implements AdminIncidentController {
@@ -16,7 +15,6 @@ public class AdminIncidentControllerImpl implements AdminIncidentController {
         this.databaseResetService = databaseResetService;
     }
 
-    @DeleteMapping("/reset")
     public ResponseEntity<String> resetDatabase() {
         logger.info("HTTP DELETE /api/admin/reset - Resetting database");
         databaseResetService.resetDatabase();

@@ -2,7 +2,7 @@ package com.incident.tracker.mapper;
 
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVO;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentEntity;
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;
 import com.incident.tracker.incident.infrastructure.persistence.entity.PriorityEntity;
@@ -21,8 +21,8 @@ public class IncidentMapper {
                 .build();
     }
 
-    public IncidentResponseVO toResponse(IncidentEntity incident) {
-        return new IncidentResponseVO(
+    public IncidentResponseVo toResponse(IncidentEntity incident) {
+        return new IncidentResponseVo(
                 incident.getId(),
                 incident.getTitle(),
                 incident.getDescription(),

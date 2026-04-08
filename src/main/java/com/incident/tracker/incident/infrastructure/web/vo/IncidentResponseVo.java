@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
-public record IncidentResponseVO(
+public record IncidentResponseVo(
         @NotBlank
         Long id,
         String title,
