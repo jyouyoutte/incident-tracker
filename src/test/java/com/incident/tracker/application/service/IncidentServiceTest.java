@@ -1,15 +1,16 @@
 package com.incident.tracker.application.service;
 
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
+import com.incident.tracker.incident.application.mapper.IncidentMapper;
 import com.incident.tracker.incident.application.service.IncidentService;
 import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
 import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
+import com.incident.tracker.incident.domain.model.Incident;
+import com.incident.tracker.incident.domain.model.IncidentStatus;
+import com.incident.tracker.incident.domain.model.Priority;
 import com.incident.tracker.incident.domain.port.IncidentRepositoryPort;
-import com.incident.tracker.mapper.IncidentMapper;
-import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentEntity;
-import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -31,10 +33,10 @@ import static org.mockito.ArgumentMatchers.any;
 class IncidentServiceTest {
 
     @Mock
-    private IncidentRepositoryPort incidentRepository;
+    private IncidentRepositoryPort incidentRepositoryPort;
 
-    @Mock
-    private IncidentMapper mapper;
+    @Spy
+    private IncidentMapper incidentMapper;
 
     @InjectMocks
     private IncidentService incidentService;
@@ -47,25 +49,26 @@ class IncidentServiceTest {
         @DisplayName("Should map, save and return the response DTO")
         void shouldCreateAndReturnDto() {
             // Given
+            LocalDateTime now = LocalDateTime.now();
             var request = new IncidentRequestVo();
             request.setTitle("Titre");
             request.setDescription("Desc");
             request.setPriority("HIGH");
             request.setStatus("OPEN");
-            var incident = new IncidentEntity();
-            var savedIncident = new IncidentEntity();
-            var response = new IncidentResponseVo(1L, "Titre", "Desc", "HIGH", "OPEN", LocalDateTime.now(), null);
+            var incident = new Incident(request.getTitle(), request.getDescription(), Priority.P2);
+            var savedIncident = new Incident(request.getTitle(), request.getDescription(), Priority.P2);
+            savedIncident.setId(1L);
+            savedIncident.setCreatedAt(now);
+            var response = new IncidentResponseVo(1L, "Titre", "Desc", "HIGH", "OPEN", now, null);
 
-            Mockito.when(mapper.toEntity(request)).thenReturn(incident);
-            Mockito.when(incidentRepository.save(incident)).thenReturn(savedIncident);
-            Mockito.when(mapper.toResponse(savedIncident)).thenReturn(response);
+            Mockito.when(incidentRepositoryPort.save(any(Incident.class))).thenReturn(savedIncident);
 
             // When
             var result = incidentService.createIncident(request);
 
             // Then
             Assertions.assertThat(result).isEqualTo(response);
-            Mockito.verify(incidentRepository, Mockito.times(1)).save(any(IncidentEntity.class));
+            Mockito.verify(incidentRepositoryPort, Mockito.times(1)).save(any(Incident.class));
         }
     }
 
@@ -75,13 +78,13 @@ class IncidentServiceTest {
 
         @Test
         @DisplayName("Should return a list of DTOs when incidents exist")
-        void shouldReturnListOfDtos() {
+        void shouldReturnListOfIncidents() {
             // Given
-            var incident = new IncidentEntity();
-            var response = new IncidentResponseVo(1L, "T", "D", "H", "OPEN", null, null);
+            var incident = new Incident("T", "D", Priority.P2);
+            incident.setId(1L);
+            var response = new IncidentResponseVo(1L, "T", "D", "HIGH", "OPEN", null, null);
 
-            Mockito.when(incidentRepository.findAll()).thenReturn(List.of(incident));
-            Mockito.when(mapper.toResponse(incident)).thenReturn(response);
+            Mockito.when(incidentRepositoryPort.findAll()).thenReturn(List.of(incident));
 
             // When
             var results = incidentService.getAllIncidents();
@@ -93,7 +96,7 @@ class IncidentServiceTest {
         @Test
         @DisplayName("Should return an empty list if no incident in database")
         void shouldReturnEmptyList() {
-            Mockito.when(incidentRepository.findAll()).thenReturn(Collections.emptyList());
+            Mockito.when(incidentRepositoryPort.findAll()).thenReturn(Collections.emptyList());
 
             var results = incidentService.getAllIncidents();
 
@@ -110,11 +113,11 @@ class IncidentServiceTest {
         void shouldReturnDtoWhenFound() {
             // Given
             Long id = 1L;
-            var incident = new IncidentEntity();
-            var response = new IncidentResponseVo(id, "T", "D", "H", "OPEN", null, null);
+            var incident = new Incident("T", "D", Priority.P2);
+            incident.setId(id);
+            var response = new IncidentResponseVo(id, "T", "D", "HIGH", "OPEN", null, null);
 
-            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
-            Mockito.when(mapper.toResponse(incident)).thenReturn(response);
+            Mockito.when(incidentRepositoryPort.findById(id)).thenReturn(Optional.of(incident));
 
             // When
             var result = incidentService.getIncidentById(id);
@@ -127,7 +130,7 @@ class IncidentServiceTest {
         @DisplayName("Should throw IncidentNotFoundException when not present")
         void shouldThrowWhenNotFound() {
             Long id = 2L;
-            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.empty());
+            Mockito.when(incidentRepositoryPort.findById(id)).thenReturn(Optional.empty());
 
             Assertions.assertThatThrownBy(() -> incidentService.getIncidentById(id))
                     .isExactlyInstanceOf(IncidentNotFoundException.class)
@@ -144,53 +147,54 @@ class IncidentServiceTest {
         void shouldCloseIncidentSuccessfully() {
             // Given
             Long id = 1L;
-            var incident = new IncidentEntity();
-            incident.setIncidentStatusEntity(IncidentStatusEntity.OPEN);
+            var incident = new Incident("T", "D", Priority.P2);
+            incident.setIncidentStatus(IncidentStatus.OPEN);
 
-            var updatedIncident = new IncidentEntity();
-            updatedIncident.setIncidentStatusEntity(IncidentStatusEntity.CLOSED);
+            var updatedIncident = new Incident("T", "D", Priority.P2);
+            updatedIncident.setIncidentStatus(IncidentStatus.CLOSED);
+            updatedIncident.setId(id);
 
-            var response = new IncidentResponseVo(id, "T", "D", "H", "CLOSED", null, null);
 
-            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
-            Mockito.when(incidentRepository.save(incident)).thenReturn(updatedIncident);
-            Mockito.when(mapper.toResponse(updatedIncident)).thenReturn(response);
+            Mockito.when(incidentRepositoryPort.findById(id)).thenReturn(Optional.of(incident));
+            Mockito.when(incidentRepositoryPort.save(incident)).thenReturn(updatedIncident);
 
             // When
             var result = incidentService.closeIncident(id);
 
             // Then
             Assertions.assertThat(result.status()).isEqualTo("CLOSED");
-            Assertions.assertThat(incident.getIncidentStatusEntity()).isEqualTo(IncidentStatusEntity.CLOSED);
-            Mockito.verify(incidentRepository).save(incident);
+            Assertions.assertThat(incident.getIncidentStatus()).isEqualTo(IncidentStatus.CLOSED);
+            Assertions.assertThat(result.id()).isEqualTo(id);
+            Mockito.verify(incidentRepositoryPort).save(incident);
         }
 
         @Test
         @DisplayName("Error: Throw IncidentNotFoundException if the ID does not exist")
         void shouldThrowExceptionWhenNotFound() {
-            Mockito.when(incidentRepository.findById(1L)).thenReturn(Optional.empty());
+            Mockito.when(incidentRepositoryPort.findById(1L)).thenReturn(Optional.empty());
 
             Assertions.assertThatThrownBy(() -> incidentService.closeIncident(1L))
                     .isExactlyInstanceOf(IncidentNotFoundException.class)
                     .hasMessageContaining("Incident not found with id: 1");
 
-            Mockito.verify(incidentRepository, Mockito.never()).save(any());
+            Mockito.verify(incidentRepositoryPort, Mockito.never()).save(any());
         }
 
         @Test
         @DisplayName("Error: Throw IncidentAlreadyClosedException if the incident is already CLOSED")
         void shouldThrowExceptionWhenAlreadyClosed() {
             // Given
-            var incident = new IncidentEntity();
-            incident.setIncidentStatusEntity(IncidentStatusEntity.CLOSED);
-            Mockito.when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+            var incident = new Incident("T", "D", Priority.P2);
+            incident.setId(1L);
+            incident.setIncidentStatus(IncidentStatus.CLOSED);
+            Mockito.when(incidentRepositoryPort.findById(1L)).thenReturn(Optional.of(incident));
 
             // When & Then
             Assertions.assertThatThrownBy(() -> incidentService.closeIncident(1L))
                     .isExactlyInstanceOf(IncidentAlreadyClosedException.class)
                     .hasMessageContaining("Incident with id " + 1 + " is already closed");
 
-            Mockito.verify(incidentRepository, Mockito.never()).save(any());
+            Mockito.verify(incidentRepositoryPort, Mockito.never()).save(any());
         }
     }
 
@@ -201,30 +205,32 @@ class IncidentServiceTest {
         @DisplayName("Update an incident successfully, must use mapper to update fields, save and return an updated incident" )
         void shouldUpdateIncidentSuccessfully() {
             // Given
+            LocalDateTime now = LocalDateTime.now();
             Long id = 1L;
             var request = new IncidentPatchRequestVo();
             request.setTitle("New Title");
             request.setDescription("New Desc");
             request.setPriority("MODERATE");
             request.setStatus("OPEN");
-            var incident = new IncidentEntity();
-            incident.setIncidentStatusEntity(IncidentStatusEntity.OPEN);
+            var incident = new Incident(request.getTitle(), request.getDescription(), Priority.P3);
+            incident.setIncidentStatus(IncidentStatus.OPEN);
 
-            var updatedIncident = new IncidentEntity();
-            updatedIncident.setIncidentStatusEntity(IncidentStatusEntity.IN_PROGRESS);
+            var updatedIncident = new Incident(request.getTitle(), request.getDescription(), Priority.P3);
+            updatedIncident.setId(id);
+            updatedIncident.setIncidentStatus(IncidentStatus.IN_PROGRESS);
+            updatedIncident.setUpdatedAt(now);
 
-            var response = new IncidentResponseVo( id,"New Title", "New Desc", "MODERATE", "IN_PROGRESS", null, LocalDateTime.now());
+            var response = new IncidentResponseVo( id,"New Title", "New Desc", "MODERATE", "IN_PROGRESS", null, now);
 
-            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
-            Mockito.when(incidentRepository.save(incident)).thenReturn(updatedIncident);
-            Mockito.when(mapper.toResponse(updatedIncident)).thenReturn(response);
+            Mockito.when(incidentRepositoryPort.findById(id)).thenReturn(Optional.of(incident));
+            Mockito.when(incidentRepositoryPort.save(incident)).thenReturn(updatedIncident);
 
             // When
             var result = incidentService.updateIncident(id, request);
 
             // Then
             Assertions.assertThat(result).isEqualTo(response);
-            Mockito.verify(incidentRepository).save(incident);
+            Mockito.verify(incidentRepositoryPort).save(incident);
         }
         @Test
         @DisplayName("Update an incident that does not exist, must throw an IncidentNotFoundException")
@@ -236,19 +242,19 @@ class IncidentServiceTest {
             request.setDescription("New Desc");
             request.setPriority("MODERATE");
             request.setStatus("OPEN");
-            var incident = new IncidentEntity();
-            incident.setIncidentStatusEntity(IncidentStatusEntity.OPEN);
+            var incident = new Incident(request.getTitle(), request.getDescription(), Priority.P3);
+            incident.setIncidentStatus(IncidentStatus.OPEN);
 
             // When
-            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.empty());
+            Mockito.when(incidentRepositoryPort.findById(id)).thenReturn(Optional.empty());
 
             Assertions.assertThatThrownBy(() -> incidentService.updateIncident(id, request))
                     .isExactlyInstanceOf(IncidentNotFoundException.class)
                     .hasMessageContaining("Incident not found with id: 2");
 
             // Then
-            Mockito.verify(incidentRepository, Mockito.only()).findById(id);
-            Mockito.verify(incidentRepository, Mockito.never()).save(any());
+            Mockito.verify(incidentRepositoryPort, Mockito.only()).findById(id);
+            Mockito.verify(incidentRepositoryPort, Mockito.never()).save(any());
         }
 
 
@@ -263,19 +269,20 @@ class IncidentServiceTest {
             request.setDescription("New Desc");
             request.setPriority("MODERATE");
             request.setStatus("CLOSED");
-            var incident = new IncidentEntity();
-            incident.setIncidentStatusEntity(IncidentStatusEntity.CLOSED);
+            var incident = new Incident(request.getTitle(), request.getDescription(), Priority.P3);
+            incident.setId(id);
+            incident.setIncidentStatus(IncidentStatus.CLOSED);
 
             // When
-            Mockito.when(incidentRepository.findById(id)).thenReturn(Optional.of(incident));
+            Mockito.when(incidentRepositoryPort.findById(id)).thenReturn(Optional.of(incident));
 
             Assertions.assertThatThrownBy(() -> incidentService.updateIncident(id, request))
                     .isExactlyInstanceOf(IncidentAlreadyClosedException.class)
                     .hasMessageContaining("Incident with id " + id + " is already closed");
 
             // Then
-            Mockito.verify(incidentRepository, Mockito.only()).findById(id);
-            Mockito.verify(incidentRepository, Mockito.never()).save(any());
+            Mockito.verify(incidentRepositoryPort, Mockito.only()).findById(id);
+            Mockito.verify(incidentRepositoryPort, Mockito.never()).save(any());
         }
     }
 }

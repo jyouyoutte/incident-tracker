@@ -1,9 +1,9 @@
 package com.incident.tracker.incident.domain.model;
 
 import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
+import com.incident.tracker.shared.domain.EnumFinderUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,8 +33,6 @@ public class Incident {
         this.incidentStatus = IncidentStatus.OPEN;
     }
 
-
-
     public List<Comment> getComments() {
         return List.copyOf(comments);
     }
@@ -48,7 +46,7 @@ public class Incident {
         this.incidentStatus = IncidentStatus.CLOSED;
     }
 
-    public void update(String title, String description, Priority priority) {
+    public void update(String title, String description, String priorityLabel, String incidentStatusLabel) {
         if (this.incidentStatus == IncidentStatus.CLOSED) {
             throw new IncidentAlreadyClosedException(this.id);
         }
@@ -61,10 +59,17 @@ public class Incident {
             this.description = description;
         }
 
-        if (priority != null) {
+        Priority priority = EnumFinderUtils.parseByValue(Priority.class, priorityLabel);
+        if (priority !=null) {
             this.priority = priority;
         }
+        IncidentStatus incidentStatus = EnumFinderUtils.parseByName(IncidentStatus.class, incidentStatusLabel);
+        if (incidentStatus !=null) {
+            this.incidentStatus = incidentStatus;
+        }
     }
+
+
 
     public void assignedResponsible(String responsible) {
         this.assignedResponsible = responsible;
@@ -77,5 +82,9 @@ public class Incident {
 
         Comment comment = new Comment(content, author);
         comments.add(comment);
+    }
+
+    public void create() {
+        this.incidentStatus = IncidentStatus.OPEN;
     }
 }

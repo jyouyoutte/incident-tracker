@@ -43,6 +43,7 @@ public class IncidentEntity {
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     // For enrichment via an external API (User Service)

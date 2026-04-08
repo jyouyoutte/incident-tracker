@@ -35,7 +35,7 @@ public class IncidentPersistenceMapper {
         entity.setTitle(domain.getTitle());
         entity.setDescription(domain.getDescription());
         entity.setIncidentStatusEntity(EnumFinderUtils.parseByName(IncidentStatusEntity.class, domain.getIncidentStatus().name()));
-        entity.setPriorityEntity(EnumFinderUtils.parseByName(PriorityEntity.class, domain.getIncidentStatus().name()));
+        entity.setPriorityEntity(EnumFinderUtils.parseByName(PriorityEntity.class, domain.getPriority().name()));
 
         return entity;
     }

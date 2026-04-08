@@ -1,16 +1,26 @@
-package com.incident.tracker.mapper;
+package com.incident.tracker.incident.application.mapper;
 
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
+import com.incident.tracker.incident.domain.model.Incident;
+import com.incident.tracker.incident.domain.model.Priority;
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentEntity;
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;
 import com.incident.tracker.incident.infrastructure.persistence.entity.PriorityEntity;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
 import com.incident.tracker.shared.domain.EnumFinderUtils;
 import org.springframework.stereotype.Component;
 
 @Component
 public class IncidentMapper {
+
+    public Incident toDomain(IncidentRequestVo vo) {
+        return new Incident(
+                vo.getTitle(),
+                vo.getDescription(),
+                EnumFinderUtils.parseByValue(Priority.class, vo.getPriority())
+        );
+    }
 
     public IncidentEntity toEntity(IncidentRequestVo dto) {
         return IncidentEntity.builder()
@@ -21,13 +31,13 @@ public class IncidentMapper {
                 .build();
     }
 
-    public IncidentResponseVo toResponse(IncidentEntity incident) {
+    public IncidentResponseVo toResponse(Incident incident) {
         return new IncidentResponseVo(
                 incident.getId(),
                 incident.getTitle(),
                 incident.getDescription(),
-                incident.getPriorityEntity()!=null ? incident.getPriorityEntity().getLabel() : null,
-                incident.getIncidentStatusEntity()!=null ? incident.getIncidentStatusEntity().name() : null,
+                incident.getPriority()!=null ? incident.getPriority().getLabel() : null,
+                incident.getIncidentStatus()!=null ? incident.getIncidentStatus().name() : null,
                 incident.getCreatedAt(),
                 incident.getUpdatedAt()
         );
