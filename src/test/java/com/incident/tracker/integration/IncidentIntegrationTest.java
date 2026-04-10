@@ -76,6 +76,7 @@ public class IncidentIntegrationTest {
                 .body("title", equalTo("Bug login"))
                 .body("status", equalTo("OPEN"))
                 .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
                 .extract()
                 .path("id");
         System.out.println("incidentId saved = " + incidentId);
@@ -91,7 +92,8 @@ public class IncidentIntegrationTest {
                 .then()
                 .statusCode(200)
                 .body("id", equalTo(incidentId))
-                .body("title", equalTo("Bug login"));
+                .body("title", equalTo("Bug login"))
+                .body("updatedAt", notNullValue());
     }
 
     @Test

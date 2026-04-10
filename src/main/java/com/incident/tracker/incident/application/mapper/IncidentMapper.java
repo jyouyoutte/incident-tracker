@@ -1,10 +1,8 @@
 package com.incident.tracker.incident.application.mapper;
 
 import com.incident.tracker.incident.domain.model.Incident;
+import com.incident.tracker.incident.domain.model.IncidentStatus;
 import com.incident.tracker.incident.domain.model.Priority;
-import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentEntity;
-import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;
-import com.incident.tracker.incident.infrastructure.persistence.entity.PriorityEntity;
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
 import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
@@ -15,23 +13,21 @@ import org.springframework.stereotype.Component;
 public class IncidentMapper {
 
     public Incident toDomain(IncidentRequestVo vo) {
-        return new Incident(
-                vo.getTitle(),
-                vo.getDescription(),
-                EnumFinderUtils.parseByValue(Priority.class, vo.getPriority())
-        );
-    }
-
-    public IncidentEntity toEntity(IncidentRequestVo dto) {
-        return IncidentEntity.builder()
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .priorityEntity(EnumFinderUtils.parseByValue(PriorityEntity.class, dto.getPriority()))
-                .incidentStatusEntity(EnumFinderUtils.parseByName(IncidentStatusEntity.class, dto.getStatus()))
-                .build();
+        if (vo == null) return null;
+        Priority priority = null;
+        if (vo.getPriority() != null) {
+            priority = EnumFinderUtils.parseByValue(Priority.class, vo.getPriority());
+        }
+        Incident incident = new Incident(vo.getTitle(), vo.getDescription(), priority);
+        if (vo.getStatus() != null) {
+            IncidentStatus status = EnumFinderUtils.parseByName(IncidentStatus.class, vo.getStatus());
+            if (status != null) incident.setIncidentStatus(status);
+        }
+        return incident;
     }
 
     public IncidentResponseVo toResponse(Incident incident) {
+        if (incident == null) return null;
         return new IncidentResponseVo(
                 incident.getId(),
                 incident.getTitle(),
@@ -44,30 +40,19 @@ public class IncidentMapper {
     }
 
     /**
-     * Updates entity fields from request DTO (only non-null values are applied)
+     * Apply patch request values to the domain incident (only non-null values are applied).
+     * Persistence-level mapping (entity fields) should be handled by the persistence mapper.
      */
-    public void updateEntityFromDto(IncidentPatchRequestVo dto, IncidentEntity entity) {
-        if (dto == null || entity == null) {
-            return;
-        }
-        if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
-            entity.setTitle(dto.getTitle());
-        }
-
-        if (dto.getDescription() != null && !dto.getDescription().isBlank()) {
-            entity.setDescription(dto.getDescription());
-        }
-
-        if (dto.getPriority() != null) {
-            entity.setPriorityEntity(EnumFinderUtils.parseByValue(PriorityEntity.class, dto.getPriority()));
-        }
-
-        if(dto.getStatus() !=null){
-            entity.setIncidentStatusEntity(EnumFinderUtils.parseByName(IncidentStatusEntity.class, dto.getStatus()));
-        }
-
-        if (dto.getAssignedDeveloper() != null) {
-            entity.setAssignedDeveloper(dto.getAssignedDeveloper());
+    public void assignResponsible(IncidentPatchRequestVo vo, Incident domain) {
+        if (vo == null || domain == null) return;
+        domain.update(
+                vo.getTitle(),
+                vo.getDescription(),
+                vo.getPriority(),
+                vo.getStatus()
+        );
+        if (vo.getAssignedDeveloper() != null) {
+            domain.assignedResponsible(vo.getAssignedDeveloper());
         }
     }
 

@@ -19,28 +19,33 @@ public class IncidentControllerImpl implements IncidentController {
         this.service = service;
     }
 
+    @Override
     public IncidentResponseVo create(IncidentRequestVo request) {
         logger.info("HTTP POST /api/incidents - Creating new incident with title={}", request.getTitle());
         return service.createIncident(request);
     }
 
+    @Override
     public List<IncidentResponseVo> getAll() {
-        logger.info("HTTP GET /api/incidents - Fetching all incidents");
+        logger.info("HTTP GET /api/incidents - getAll");
         return service.getAllIncidents();
     }
 
+    @Override
     public IncidentResponseVo getById(Long id) {
         logger.info("HTTP GET /api/incidents/{}", id);
         return service.getIncidentById(id);
     }
 
+    @Override
     public IncidentResponseVo close(Long id) {
         logger.info("HTTP POST /api/incidents/{}/close", id);
         return service.closeIncident(id);
     }
 
+    @Override
     public IncidentResponseVo update(Long id, IncidentPatchRequestVo request) {
-        logger.info("HTTP PATCH /api/incidents/{} - Updating incident with title={}", id, request.getTitle());
+        logger.info("HTTP PATCH /api/incidents/{} - update", id);
         return service.updateIncident(id, request);
     }
 }
