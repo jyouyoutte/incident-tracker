@@ -1,15 +1,16 @@
-package com.incident.tracker.infrastructure.web;
+package com.incident.tracker.incident.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
-import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
-import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
-import com.incident.tracker.incident.application.service.IncidentService;
-import com.incident.tracker.incident.infrastructure.web.controller.IncidentController;
 import com.incident.tracker.auth.infrastructure.security.provider.JwtTokenProvider;
 import com.incident.tracker.auth.infrastructure.security.service.CustomUserDetailsService;
+import com.incident.tracker.incident.application.dto.IncidentDto;
+import com.incident.tracker.incident.application.service.IncidentService;
+import com.incident.tracker.incident.domain.exception.IncidentAlreadyClosedException;
+import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
+import com.incident.tracker.incident.infrastructure.web.controller.IncidentController;
+import com.incident.tracker.incident.infrastructure.web.mapper.IncidentWebMapper;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(IncidentController.class)
 class IncidentControllerTest {
@@ -39,13 +43,15 @@ class IncidentControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
     /** @MockBean adds dummy beans to the test context, satisfying the JwtAuthenticationFilter injection without loading the entire security configuration.*/
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
     @MockitoBean
     private CustomUserDetailsService customUserDetailsService;
+
+    @MockitoBean
+    private IncidentWebMapper incidentWebMapper;
 
     @Test
     @DisplayName("POST /api/incidents - Success")
@@ -57,10 +63,22 @@ class IncidentControllerTest {
         request.setPriority("HIGH");
         request.setStatus("OPEN");
 
-        IncidentResponseVo response =
-                new IncidentResponseVo(1L, "Bug login", "Impossible login","HIGH","OPEN", LocalDateTime.now(), LocalDateTime.now());
+        // Mapper must be stubbed: map request -> DTO
+        IncidentDto requestDto = IncidentDto.builder()
+                .title("Bug login").description("Impossible login").priority("HIGH").incidentStatus("OPEN").build();
+        when(incidentWebMapper.fromCreateRequestToDto(any(IncidentRequestVo.class))).thenReturn(requestDto);
 
-        when(service.createIncident(any())).thenReturn(response);
+        IncidentDto incidentDto = IncidentDto.builder()
+                .id(1L).title("Bug login").description("Impossible login").priority("HIGH")
+                .incidentStatus("OPEN").createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
+
+        when(service.createIncident(any(IncidentDto.class))).thenReturn(incidentDto);
+
+        // Mapper must convert DTO -> web response
+        when(incidentWebMapper.toWebResponse(any(IncidentDto.class))).thenAnswer(invocation -> {
+            IncidentDto dto = invocation.getArgument(0);
+            return new IncidentResponseVo(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getPriority(), dto.getIncidentStatus(), dto.getCreatedAt(), dto.getUpdatedAt());
+        });
 
         mockMvc.perform(post("/api/incidents")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,10 +111,20 @@ class IncidentControllerTest {
     @DisplayName("GET /api/incidents - find all incidents")
     void shouldGetAllIncidents() throws Exception {
         // Given
-        var response1 = new IncidentResponseVo(1L, "No connection", "D", "H", "OPEN", null, null);
-        var response2 = new IncidentResponseVo(2L, "No incidents displayed", "D", "H", "OPEN", null, null);
+        var incidentDto1 =  IncidentDto.builder().
+                id(1L).title("No connection").description("D").priority("MODERATE").incidentStatus( "OPEN").build();
 
-        when(service.getAllIncidents()).thenReturn(List.of(response1, response2));
+
+        var incidentDto2 = IncidentDto.builder().id(2L).description("o incidents displayed")
+                .description("D").incidentStatus( "HIGH").build();
+
+        when(service.getAllIncidents()).thenReturn(List.of(incidentDto1, incidentDto2));
+
+        // Map DTOs to web responses
+        when(incidentWebMapper.toWebResponse(any(IncidentDto.class))).thenAnswer(invocation -> {
+            IncidentDto dto = invocation.getArgument(0);
+            return new IncidentResponseVo(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getPriority(), dto.getIncidentStatus(), dto.getCreatedAt(), dto.getUpdatedAt());
+        });
 
         // When & Then
         mockMvc.perform(get("/api/incidents"))
@@ -109,9 +137,15 @@ class IncidentControllerTest {
     @DisplayName("GET /api/incidents/{id} - Success")
     void shouldGetIncidentById() throws Exception {
         Long id = 1L;
-        var response = new IncidentResponseVo(id, "Bug login", "Impossible login", "HIGH", "OPEN", null, LocalDateTime.now());
+        var incidentDto = IncidentDto.builder().id(id).title("Bug login").description("Impossible login").priority("HIGH").incidentStatus("OPEN").updatedAt(LocalDateTime.now())
+                .build();
 
-        when(service.getIncidentById(id)).thenReturn(response);
+        when(service.getIncidentById(id)).thenReturn(incidentDto);
+
+        when(incidentWebMapper.toWebResponse(any(IncidentDto.class))).thenAnswer(invocation -> {
+            IncidentDto dto = invocation.getArgument(0);
+            return new IncidentResponseVo(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getPriority(), dto.getIncidentStatus(), dto.getCreatedAt(), dto.getUpdatedAt());
+        });
 
         mockMvc.perform(get("/api/incidents/1"))
                 .andExpect(status().isOk())
@@ -132,8 +166,14 @@ class IncidentControllerTest {
     @DisplayName("POST /api/incidents/{id}/close - Success in case of closed incident")
     void shouldCloseIncident() throws Exception {
         // Given
-        var response = new IncidentResponseVo(1L, "T", "D", "H", "CLOSED", null, null);
-        when(service.closeIncident(1L)).thenReturn(response);
+        var incidentDto =  IncidentDto.builder().id(1L).title( "T")
+                .description( "D").priority( "H").incidentStatus("CLOSED").build();
+        when(service.closeIncident(1L)).thenReturn(incidentDto);
+
+        when(incidentWebMapper.toWebResponse(any(IncidentDto.class))).thenAnswer(invocation -> {
+            IncidentDto dto = invocation.getArgument(0);
+            return new IncidentResponseVo(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getPriority(), dto.getIncidentStatus(), dto.getCreatedAt(), dto.getUpdatedAt());
+        });
 
         // When & Then
         mockMvc.perform(post("/api/incidents/1/close"))
@@ -163,14 +203,26 @@ class IncidentControllerTest {
     void shouldUpdateIncident() throws Exception {
         // Given
         Long id = 1L;
-        var response = new IncidentResponseVo(id, "Bug login", "Impossible login", "HIGH", "IN_PROGRESS", null, LocalDateTime.now());
+        var incidentDto =  IncidentDto.builder().id(id).title( "Bug login").description("Impossible login")
+                .priority( "HIGH").incidentStatus( "IN_PROGRESS").updatedAt(LocalDateTime.now()).build();
+
         IncidentPatchRequestVo request = new IncidentPatchRequestVo();
         request.setTitle("Bug login");
         request.setDescription("Impossible login");
         request.setPriority("HIGH");
         request.setStatus("IN_PROGRESS");
 
-        when(service.updateIncident(eq(id), any(IncidentPatchRequestVo.class))).thenReturn(response);
+        when(service.updateIncident(eq(id), any(IncidentDto.class))).thenReturn(incidentDto);
+
+        // Mapper must convert patch request -> DTO so service stub matches
+        IncidentDto patchDto = IncidentDto.builder()
+                .title("Bug login").description("Impossible login").priority("HIGH").incidentStatus("IN_PROGRESS").build();
+        when(incidentWebMapper.fromPatchRequestToDto(any(IncidentPatchRequestVo.class))).thenReturn(patchDto);
+
+        when(incidentWebMapper.toWebResponse(any(IncidentDto.class))).thenAnswer(invocation -> {
+            IncidentDto dto = invocation.getArgument(0);
+            return new IncidentResponseVo(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getPriority(), dto.getIncidentStatus(), dto.getCreatedAt(), dto.getUpdatedAt());
+        });
 
         // When & Then
         mockMvc.perform(patch("/api/incidents/1", id)
@@ -180,5 +232,4 @@ class IncidentControllerTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.title").value("Bug login"));
     }
-
 }

@@ -28,7 +28,7 @@ Principales classes de test
   l'utilisation d'un RequestSpec global.
 - `com.incident.tracker.integration.IncidentIntegrationTest` : tests d'API métier (création, lecture,
   mise à jour d'incidents). Montre comment réutiliser le token pour les endpoints protégés.
-- `com.incident.tracker.infrastructure.web.AuthControllerTest` : tests unitaires (MockMvc) pour
+- `com.incident.tracker.auth.web.AuthControllerTest` : tests unitaires (MockMvc) pour
   `AuthController` — utiles pour des tests rapides sans démarrer tout le contexte.
 
 Comment exécuter les tests localement
@@ -50,7 +50,7 @@ Depuis la racine du projet (où se trouve `mvnw`) :
 - Exécuter uniquement la classe MockMvc `AuthControllerTest` :
 
 ```bash
-./mvnw -Dtest=com.incident.tracker.infrastructure.web.AuthControllerTest test -f pom.xml
+./mvnw -Dtest=com.incident.tracker.auth.web.AuthControllerTest test -f pom.xml
 ```
 
 Conseils pour l'exécution dans l'IDE (IntelliJ / Eclipse)

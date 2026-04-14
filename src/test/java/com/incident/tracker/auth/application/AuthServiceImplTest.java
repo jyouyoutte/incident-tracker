@@ -1,4 +1,4 @@
-package com.incident.tracker.application.service.impl;
+package com.incident.tracker.auth.application;
 
 import com.incident.tracker.auth.application.dto.AuthResponseDto;
 import com.incident.tracker.auth.application.dto.UserDto;

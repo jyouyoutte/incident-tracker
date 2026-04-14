@@ -1,4 +1,4 @@
-package com.incident.tracker.application.service;
+package com.incident.tracker.auth.infrastructure.security;
 
 import com.incident.tracker.auth.infrastructure.persistence.entity.RoleEntity;
 import com.incident.tracker.auth.infrastructure.persistence.entity.UserEntity;

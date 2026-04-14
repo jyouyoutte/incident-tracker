@@ -1,4 +1,4 @@
-package com.incident.tracker.infrastructure.web;
+package com.incident.tracker.auth.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.incident.tracker.auth.application.dto.AuthResponseDto;

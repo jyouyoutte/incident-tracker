@@ -27,7 +27,7 @@ Main test classes
   (login, registration, error cases). This test demonstrates JWT extraction and using a global RequestSpec.
 - `com.incident.tracker.integration.IncidentIntegrationTest`: business API integration tests (create, read,
   update incidents). Shows how to reuse the token for protected endpoints.
-- `com.incident.tracker.infrastructure.web.AuthControllerTest`: unit tests (MockMvc) for the `AuthController` —
+- `com.incident.tracker.auth.web.AuthControllerTest`: unit tests (MockMvc) for the `AuthController` —
   useful for fast controller-level checks without starting the full context.
 
 How to run the tests locally
@@ -49,7 +49,7 @@ From the project root (where `mvnw` is located):
 - Run only the MockMvc unit test `AuthControllerTest`:
 
 ```bash
-./mvnw -Dtest=com.incident.tracker.infrastructure.web.AuthControllerTest test -f pom.xml
+./mvnw -Dtest=com.incident.tracker.auth.web.AuthControllerTest test -f pom.xml
 ```
 
 IDE tips (IntelliJ / Eclipse)

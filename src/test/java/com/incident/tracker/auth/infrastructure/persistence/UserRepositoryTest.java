@@ -1,4 +1,4 @@
-package com.incident.tracker.infrastructure.persistence;
+package com.incident.tracker.auth.infrastructure.persistence;
 
 import com.incident.tracker.auth.infrastructure.persistence.entity.UserEntity;
 import com.incident.tracker.auth.infrastructure.persistence.repository.UserJpaRepository;

@@ -1,6 +1,6 @@
-package com.incident.tracker.infrastructure.security.provider;
+package com.incident.tracker.auth.infrastructure.security;
 
-import com.incident.tracker.TestUtils;
+import com.incident.tracker.shared.TestUtils;
 import com.incident.tracker.auth.infrastructure.security.provider.JwtTokenProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

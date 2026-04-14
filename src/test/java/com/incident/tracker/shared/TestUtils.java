@@ -1,4 +1,4 @@
-package com.incident.tracker;
+package com.incident.tracker.shared;
 
 import java.lang.reflect.Field;
 

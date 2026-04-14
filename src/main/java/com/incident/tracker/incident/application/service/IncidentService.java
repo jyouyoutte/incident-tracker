@@ -1,12 +1,10 @@
 package com.incident.tracker.incident.application.service;
 
+import com.incident.tracker.incident.application.dto.IncidentDto;
 import com.incident.tracker.incident.application.mapper.IncidentMapper;
 import com.incident.tracker.incident.domain.exception.IncidentNotFoundException;
 import com.incident.tracker.incident.domain.model.Incident;
 import com.incident.tracker.incident.domain.port.IncidentRepositoryPort;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentPatchRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentRequestVo;
-import com.incident.tracker.incident.infrastructure.web.vo.IncidentResponseVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,61 +24,61 @@ public class IncidentService {
     }
 
     @Transactional
-    public IncidentResponseVo createIncident(IncidentRequestVo request) {
+    public IncidentDto createIncident(IncidentDto dto) {
         logger.info("Creating incident");
-        Incident incident = incidentMapper.toDomain(request);
+        Incident incident = incidentMapper.toDomain(dto);
         incident.create();
         Incident saved = incidentRepositoryPort.save(incident);
         logger.info("Incident created with id={} and title={}", saved.getId(), saved.getTitle());
-        return incidentMapper.toResponse(saved);
+        return incidentMapper.toDto(saved);
     }
 
     @Transactional(readOnly = true)
-    public List<IncidentResponseVo> getAllIncidents() {
+    public List<IncidentDto> getAllIncidents() {
         logger.info("Fetching all incidents");
-        List<IncidentResponseVo> results = incidentRepositoryPort.findAll()
+        List<IncidentDto> results = incidentRepositoryPort.findAll()
                 .stream()
-                .map(incidentMapper::toResponse)
+                .map(incidentMapper::toDto)
                 .toList();
         logger.info("Fetched {} incident(s)", results.size());
         return results;
     }
 
     @Transactional(readOnly = true)
-    public IncidentResponseVo getIncidentById(Long id) {
+    public IncidentDto getIncidentById(Long id) {
         logger.info("Fetching incident with id={}", id);
         Incident incident = incidentRepositoryPort.findById(id)
                 .orElseThrow(() -> new IncidentNotFoundException(id));
-        return incidentMapper.toResponse(incident);
+        return incidentMapper.toDto(incident);
     }
 
     @Transactional
-    public IncidentResponseVo closeIncident(Long id) {
+    public IncidentDto closeIncident(Long id) {
         logger.info("Closing incident with id={}", id);
         Incident incident = incidentRepositoryPort.findById(id)
                 .orElseThrow(() -> new IncidentNotFoundException(id));
         incident.close();
         Incident updated = incidentRepositoryPort.save(incident);
         logger.info("Incident closed");
-        return incidentMapper.toResponse(updated);
+        return incidentMapper.toDto(updated);
     }
 
     @Transactional
-    public IncidentResponseVo updateIncident(Long id, IncidentPatchRequestVo request) {
+    public IncidentDto updateIncident(Long id, IncidentDto incidentDto) {
         logger.info("Updating incident with id={}", id);
         Incident incident = incidentRepositoryPort.findById(id)
                 .orElseThrow(() -> new IncidentNotFoundException(id));
 
         incident.update(
-                request.getTitle(),
-                request.getDescription(),
-                request.getPriority(),
-                request.getStatus()
+                incidentDto.getTitle(),
+                incidentDto.getDescription(),
+                incidentDto.getPriority(),
+                incidentDto.getIncidentStatus()
         );
 
         Incident updated = incidentRepositoryPort.save(incident);
 
         logger.info("Incident updated at {}", updated.getUpdatedAt());
-        return incidentMapper.toResponse(updated);
+        return incidentMapper.toDto(updated);
     }
 }

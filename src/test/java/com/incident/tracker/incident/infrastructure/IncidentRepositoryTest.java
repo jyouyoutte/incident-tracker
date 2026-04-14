@@ -1,4 +1,4 @@
-package com.incident.tracker.infrastructure.persistence;
+package com.incident.tracker.incident.infrastructure;
 
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentEntity;
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;

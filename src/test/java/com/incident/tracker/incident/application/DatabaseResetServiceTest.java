@@ -1,4 +1,4 @@
-package com.incident.tracker.application.service;
+package com.incident.tracker.incident.application;
 
 import com.incident.tracker.incident.domain.port.IncidentRepositoryPort;
 import com.incident.tracker.incident.application.service.DatabaseResetService;

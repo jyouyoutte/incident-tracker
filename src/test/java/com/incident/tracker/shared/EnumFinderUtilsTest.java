@@ -1,4 +1,4 @@
-package com.incident.tracker.domain.utils;
+package com.incident.tracker.shared;
 
 import com.incident.tracker.incident.infrastructure.persistence.entity.IncidentStatusEntity;
 import com.incident.tracker.incident.infrastructure.persistence.entity.PriorityEntity;

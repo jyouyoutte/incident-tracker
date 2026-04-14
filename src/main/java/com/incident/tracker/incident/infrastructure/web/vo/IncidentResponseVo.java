@@ -5,10 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 public record IncidentResponseVo(
-        @NotBlank
         Long id,
         String title,
-        @NotBlank
         String description,
         String priority,
         String status,
