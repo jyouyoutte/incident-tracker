@@ -1,4 +1,4 @@
-package com.incident.tracker.auth.infrastructure.persistence.mapper;
+package com.incident.tracker.auth.application.mapper;
 
 import com.incident.tracker.auth.application.dto.UserDto;
 import com.incident.tracker.auth.infrastructure.persistence.entity.RoleEntity;

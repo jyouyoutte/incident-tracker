@@ -6,7 +6,7 @@ import com.incident.tracker.auth.infrastructure.persistence.repository.RoleRepos
 import com.incident.tracker.auth.infrastructure.persistence.repository.UserRepositoryPort;
 import com.incident.tracker.auth.infrastructure.persistence.entity.RoleEntity;
 import com.incident.tracker.auth.infrastructure.persistence.entity.UserEntity;
-import com.incident.tracker.auth.infrastructure.persistence.mapper.UserPersistenceMapper;
+import com.incident.tracker.auth.application.mapper.UserPersistenceMapper;
 import com.incident.tracker.auth.infrastructure.security.exception.UserAlreadyExistsException;
 import com.incident.tracker.auth.infrastructure.security.exception.UserNotCreatedException;
 import com.incident.tracker.auth.infrastructure.security.provider.JwtTokenProvider;
